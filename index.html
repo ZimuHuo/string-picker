@@ -7,10 +7,10 @@
 :root{--bg:#101012;--card:#1b1b1f;--card2:#111114;--text:#f7f7f8;--muted:#aaa;--blue:#0a84ff;--green:#30d158;--red:#ff453a;--border:#303036}
 *{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);margin:0}main{max-width:760px;margin:auto;padding:20px 16px 42px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin:12px 0}h1{margin:0 0 5px;font-size:28px}.sub{color:var(--muted);margin:0 0 16px}.version{font-size:11px;color:#777}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:560px){.grid{grid-template-columns:1fr}.buttons{grid-template-columns:1fr 1fr!important}.buttons #startBtn,.buttons #stopBtn{grid-column:span 2}}label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}select,input,button{font:inherit;font-size:17px;border-radius:12px;padding:12px}select,input{width:100%;background:var(--card2);color:#fff;border:1px solid var(--border)}button{border:0;background:var(--blue);color:#fff;font-weight:700}button.secondary{background:#343439}button.danger{background:#6b211e}button:disabled{opacity:.45}.buttons{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:9px}.hidden{display:none!important}
 .prompt{min-height:118px;display:flex;align-items:center;justify-content:center;gap:15px;flex-wrap:wrap;font-size:clamp(48px,12vw,76px);font-weight:800;text-align:center;overflow:hidden}.num{display:inline-flex;align-items:center;justify-content:center;min-width:1em;padding:.03em .12em;border-radius:.2em}.num.done{color:var(--green)}.num.now{outline:3px solid var(--blue);outline-offset:4px}.status,.heard,.debug{text-align:center;min-height:24px;color:var(--muted)}.status.ok{color:var(--green)}.status.bad{color:var(--red)}.heard{font-size:14px;margin-top:5px}.debug{font-size:12px;min-height:18px}.progress{height:10px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:13px}.progress div{height:100%;width:0;background:var(--blue);transition:width .08s ease}.meterLabel{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:14px}.micmeter{height:7px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:4px}.micmeter div{height:100%;width:0;background:var(--green);transition:width .04s linear}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}.stat{background:var(--card2);border-radius:12px;padding:10px}.stat b{display:block;font-size:24px}.stat span{font-size:12px;color:var(--muted)}.small{color:var(--muted);font-size:13px;line-height:1.5}
-.gamePrompt{min-height:155px;padding:4px 0}.gameTrack{width:100%;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;gap:4px}.gameTrack.slide{animation:slideLeft .16s ease-out}.gameNum{font-size:clamp(34px,10vw,62px);font-weight:800;text-align:center;opacity:.5;transform:scale(.82)}.gameNum.past{opacity:.22}.gameNum.target{opacity:1;transform:scale(1.22);outline:3px solid var(--blue);outline-offset:7px;border-radius:10px}.gameHint{text-align:center;color:var(--muted);font-size:13px;margin-top:8px}@keyframes slideLeft{from{transform:translateX(18%)}to{transform:translateX(0)}}
+.gamePrompt{min-height:155px;padding:4px 0}.gameTrack{width:100%;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;gap:4px}.gameTrack.slide{animation:slideLeft .16s ease-out}.gameNum{font-size:clamp(34px,10vw,62px);font-weight:800;text-align:center;opacity:.5;transform:scale(.82);transition:outline-color .06s,color .06s,text-shadow .06s}.gameNum.past{opacity:.22}.gameNum.target{opacity:1;transform:scale(1.22);outline:3px solid var(--blue);outline-offset:7px;border-radius:10px}.gameNum.target.correct{outline-color:var(--green);color:var(--green);text-shadow:0 0 24px rgba(48,209,88,.55)}.gameHint{text-align:center;color:var(--muted);font-size:13px;margin-top:8px}@keyframes slideLeft{from{transform:translateX(18%)}to{transform:translateX(0)}}
 </style></head>
 <body><main>
-<h1>String Picker</h1><p class="sub">Practice finding guitar strings without looking. <span class="version">v12</span></p>
+<h1>String Picker</h1><p class="sub">Practice finding guitar strings without looking. <span class="version">v13</span></p>
 <div class="card"><div class="grid">
 <div><label>Mode</label><select id="appMode"><option value="practice">Practice patterns</option><option value="game">Game — infinite stream</option></select></div>
 <div><label>Detection</label><select id="detection"><option value="strict">Strict</option><option value="balanced" selected>Balanced</option><option value="soft">Soft picking / quiet room</option></select></div>
@@ -26,7 +26,7 @@
 </div>
 <div class="card"><div class="buttons"><button id="startBtn">Start</button><button id="repeatBtn" class="secondary" disabled>Repeat</button><button id="nextBtn" class="secondary" disabled>Next</button><button id="testBtn" class="secondary" disabled>Test mic</button><button id="stopBtn" class="danger" disabled>Stop</button></div></div>
 <div class="card stats"><div class="stat"><b id="correct">0</b><span id="correctLabel">patterns correct</span></div><div class="stat"><b id="mistakes">0</b><span>wrong strings</span></div><div class="stat"><b id="accuracy">—</b><span>accuracy</span></div></div>
-<div class="card small"><b>v12 detector:</b> instead of trying to identify every sound like a tuner, the app now asks: “does this sound match the string I am waiting for?” It measures the waveform period of all six open strings, gives the expected string priority, uses a window sized to that string, and requires a fresh pluck before one sound can count twice.</div>
+<div class="card small"><b>v13:</b> the v12 open-string detector is unchanged, and Game mode now gives immediate visual feedback: the center target turns green when the note is accepted, then the stream moves left.</div>
 </main>
 <script>
 (()=>{
@@ -38,7 +38,7 @@ const profiles={
  soft:{gate:.000045,noiseRatio:1.10,accept:.55,strong:.69,nearMargin:.045,hits:2,rise:.055,attack:1.10,wrong:.80}
 };
 let stream,audioCtx,analyser,source,loopTimer,nextTimer,running=false,testMode=false,current=[],idx=0,correct=0,mistakes=0;
-let noiseFloor=.00006,speechGuardUntil=0,prevShort=.00006,armed=true,lastAcceptedAt=0,lastAcceptedString=null,baselineScores={},hitTimes=[],wrongTimes=[];
+let noiseFloor=.00006,speechGuardUntil=0,prevShort=.00006,armed=true,lastAcceptedAt=0,lastAcceptedString=null,baselineScores={},hitTimes=[],wrongTimes=[],gameTransition=false;
 const appMode=$("appMode"),detection=$("detection"),groupSize=$("groupSize"),spacing=$("spacing"),voiceRate=$("voiceRate"),promptEl=$("prompt"),gameHint=$("gameHint"),statusEl=$("status"),heardEl=$("heard"),debugEl=$("debug"),progressWrap=$("progressWrap"),bar=$("bar"),micbar=$("micbar"),levelText=$("levelText"),startBtn=$("startBtn"),repeatBtn=$("repeatBtn"),nextBtn=$("nextBtn"),testBtn=$("testBtn"),stopBtn=$("stopBtn"),correctEl=$("correct"),mistakesEl=$("mistakes"),accuracyEl=$("accuracy"),correctLabel=$("correctLabel");
 function isGame(){return appMode.value==='game'}
 function stats(){correctEl.textContent=correct;mistakesEl.textContent=mistakes;const t=correct+mistakes;accuracyEl.textContent=t?Math.round(correct/t*100)+"%":"—"}
@@ -47,11 +47,11 @@ function randomDifferent(prev){let n;do n=1+Math.floor(Math.random()*6);while(n=
 function makeGame(){const a=[1+Math.floor(Math.random()*6)];while(a.length<5)a.push(randomDifferent(a[a.length-1]));return a}
 function expected(){return isGame()?current[2]:current[idx]}
 function renderPractice(){promptEl.className='prompt';promptEl.innerHTML=current.map((n,i)=>`<span class="num ${i<idx?'done':i===idx?'now':''}">${n}</span>`).join('')}
-function renderGame(anim=false){promptEl.className='prompt gamePrompt';promptEl.innerHTML=`<div class="gameTrack ${anim?'slide':''}">${current.map((n,i)=>`<div class="gameNum ${i<2?'past':i===2?'target':''}">${n}</div>`).join('')}</div>`}
+function renderGame(anim=false,correctFlash=false){promptEl.className='prompt gamePrompt';promptEl.innerHTML=`<div class="gameTrack ${anim?'slide':''}">${current.map((n,i)=>`<div class="gameNum ${i<2?'past':i===2?`target${correctFlash?' correct':''}`:''}">${n}</div>`).join('')}</div>`}
 function render(){isGame()?renderGame():renderPractice()}
 function updateModeUI(){const g=isGame();document.querySelectorAll('.practiceOnly').forEach(x=>x.classList.toggle('hidden',g));gameHint.classList.toggle('hidden',!g);progressWrap.classList.toggle('hidden',g);repeatBtn.classList.toggle('hidden',g);nextBtn.classList.toggle('hidden',g);correctLabel.textContent=g?'hits':'patterns correct';if(!running){promptEl.className='prompt';promptEl.textContent='—';statusEl.textContent=g?'Game mode: tap Start, then play the middle number.':'Tap Start and allow microphone access.'}}
 function clearEvidence(){hitTimes=[];wrongTimes=[]}
-function resetDetector(){armed=true;lastAcceptedAt=0;lastAcceptedString=null;baselineScores={};clearEvidence()}
+function resetDetector(){armed=true;lastAcceptedAt=0;lastAcceptedString=null;baselineScores={};gameTransition=false;clearEvidence()}
 function speak(p){if(isGame())return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(p.join(', '));u.rate=parseFloat(voiceRate.value);u.onstart=()=>speechGuardUntil=performance.now()+900;u.onend=()=>{speechGuardUntil=performance.now()+330;statusEl.textContent=`Play string ${expected()}.`};speechSynthesis.speak(u)}
 function showPractice(){clearTimeout(nextTimer);current=shufflePrompt(parseInt(groupSize.value,10));idx=0;resetDetector();bar.style.width='0%';renderPractice();statusEl.className='status';statusEl.textContent='Listen…';heardEl.textContent='Microphone active';speak(current)}
 function startGame(){clearTimeout(nextTimer);current=makeGame();idx=2;resetDetector();renderGame();statusEl.className='status';statusEl.textContent=`Play string ${expected()}`;heardEl.textContent='Microphone active'}
@@ -79,7 +79,7 @@ function analyze(){
 }
 function scoreOf(frame,s){return frame.scores?.find(x=>x.s===s)?.score||0}
 function rearm(frame){
- if(armed)return;const p=profiles[detection.value]||profiles.balanced,exp=expected(),expScore=scoreOf(frame,exp),base=baselineScores[exp]||0;
+ if(gameTransition||armed)return;const p=profiles[detection.value]||profiles.balanced,exp=expected(),expScore=scoreOf(frame,exp),base=baselineScores[exp]||0;
  const pitchSwitch=frame.best&&frame.best.s===exp&&expScore-base>=p.rise;
  const freshAttack=frame.attack&&performance.now()-lastAcceptedAt>45;
  if(freshAttack||pitchSwitch){armed=true;clearEvidence();debugEl.textContent=freshAttack?'new pluck: attack':'new pluck: pitch change'}
@@ -87,7 +87,8 @@ function rearm(frame){
 function accept(frame){
  const s=expected();lastAcceptedString=s;lastAcceptedAt=performance.now();armed=false;baselineScores={};for(const x of frame.scores||[])baselineScores[x.s]=x.score;clearEvidence();statusEl.className='status ok';
  if(isGame()){
-  correct++;stats();current.shift();current.push(randomDifferent(current[current.length-1]));renderGame(true);statusEl.textContent=`Correct — now ${expected()}`;
+  correct++;stats();gameTransition=true;renderGame(false,true);statusEl.textContent='Correct ✓';
+  setTimeout(()=>{if(!running||!isGame())return;current.shift();current.push(randomDifferent(current[current.length-1]));gameTransition=false;clearEvidence();renderGame(true);statusEl.textContent=`Play string ${expected()}`},90);
  }else{
   idx++;bar.style.width=(idx/current.length*100)+'%';renderPractice();if(idx>=current.length){correct++;stats();statusEl.textContent='Correct ✓';schedulePractice()}else statusEl.textContent=`Correct. Now ${expected()}`;
  }
@@ -97,13 +98,13 @@ function decide(frame){
  const p=profiles[detection.value]||profiles.balanced,b=frame.best,exp=expected(),e=frame.scores.find(x=>x.s===exp),second=frame.scores[1];
  heardEl.textContent=`Best: string ${b.s} • target ${exp}`;debugEl.textContent=`target ${Math.round(e.score*100)}% • best ${Math.round(b.score*100)}% • ~${Math.round(e.hz)} Hz`;
  if(testMode){statusEl.className=b.score>=p.accept?'status ok':'status';statusEl.textContent=b.score>=p.accept?`Detected string ${b.s}`:'Analyzing…';return}
+ if(gameTransition)return;
  rearm(frame);if(!armed)return;
  const nearBest=b.s===exp || e.score>=b.score-p.nearMargin;
  const strong=e.score>=p.strong&&nearBest;
  const moderate=e.score>=p.accept&&nearBest;
  const now=performance.now();hitTimes=hitTimes.filter(t=>t>now-145);if(moderate)hitTimes.push(now);
  if(strong||hitTimes.length>=p.hits){accept(frame);return}
- // Wrong notes are only counted when a fresh event is armed and another string clearly dominates.
  if(b.s!==exp&&b.s!==lastAcceptedString&&b.score>=p.wrong&&b.score-e.score>.12){wrongTimes=wrongTimes.filter(t=>t>now-180);wrongTimes.push(now);if(wrongTimes.length>=3){mistakes++;stats();statusEl.className='status bad';statusEl.textContent=`Heard ${b.s}; expected ${exp}.`;armed=false;lastAcceptedAt=now;baselineScores={};for(const x of frame.scores)baselineScores[x.s]=x.score;clearEvidence()}}
 }
 function loop(){if(!running||!analyser)return;decide(analyze());loopTimer=setTimeout(loop,32)}
