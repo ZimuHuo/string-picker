@@ -1,1 +1,104 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>String Picker</title><style>body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;background:#111;color:#fff;margin:0;padding:20px}main{max-width:720px;margin:auto}.card{background:#1b1b1f;border-radius:16px;padding:16px;margin:12px 0}label{display:block;color:#aaa;font-size:13px;margin-bottom:6px}select,input,button{font-size:17px;border-radius:12px;padding:12px}select,input{width:100%;box-sizing:border-box;background:#111;color:#fff;border:1px solid #333}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:560px){.grid{grid-template-columns:1fr}}button{border:0;background:#0a84ff;color:white;font-weight:700;margin-right:8px}.secondary{background:#333}.danger{background:#6b211e}.prompt{font-size:64px;font-weight:800;text-align:center;min-height:110px;display:flex;align-items:center;justify-content:center}.status,.heard{text-align:center;color:#aaa;min-height:24px}.ok{color:#30d158}.bad{color:#ff453a}.progress{height:10px;background:#111;border-radius:99px;overflow:hidden;margin-top:12px}.progress div{height:100%;width:0;background:#0a84ff}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}.stat{background:#111;border-radius:12px;padding:10px}.stat b{display:block;font-size:24px}.small{color:#aaa;font-size:13px;line-height:1.5}</style></head><body><main><h1>String Picker</h1><p>Practice finding guitar strings without looking.</p><div class="card"><div class="grid"><div><label>Strings per prompt</label><select id="groupSize"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select></div><div><label>Gap after prompt (seconds)</label><input id="spacing" type="number" min="1" max="30" step="0.5" value="5"></div><div><label>Voice speed</label><select id="voiceRate"><option value="0.62">Very slow</option><option value="0.78" selected>Slow</option><option value="0.95">Normal</option></select></div><div><label>Advance</label><select id="mode"><option value="correct" selected>After correct pattern</option><option value="timer">After timer</option></select></div></div></div><div class="card"><div id="prompt" class="prompt">—</div><div id="status" class="status">Tap Start and allow microphone access.</div><div id="heard" class="heard">Heard: —</div><div class="progress"><div id="bar"></div></div></div><div class="card"><button id="startBtn">Start</button><button id="repeatBtn" class="secondary" disabled>Repeat</button><button id="nextBtn" class="secondary" disabled>Next</button><button id="stopBtn" class="danger" disabled>Stop</button></div><div class="card stats"><div class="stat"><b id="correct">0</b><span>correct</span></div><div class="stat"><b id="mistakes">0</b><span>mistakes</span></div><div class="stat"><b id="accuracy">—</b><span>accuracy</span></div></div><div class="card small">Standard tuning: 6=E, 5=A, 4=D, 3=G, 2=B, 1=high E. Play open strings one at a time.</div></main><script>(()=>{const $=id=>document.getElementById(id);const hz={1:329.63,2:246.94,3:196,4:146.83,5:110,6:82.41};let stream,audioCtx,analyser,src,raf,running=false,current=[],idx=0,nextTimer=null,correct=0,mistakes=0,speechGuardUntil=0,stableCandidate=null,stableSince=0,lastAccepted=0,lastWrong=0;const groupSize=$("groupSize"),spacing=$("spacing"),voiceRate=$("voiceRate"),mode=$("mode"),promptEl=$("prompt"),statusEl=$("status"),heardEl=$("heard"),bar=$("bar"),startBtn=$("startBtn"),repeatBtn=$("repeatBtn"),nextBtn=$("nextBtn"),stopBtn=$("stopBtn"),correctEl=$("correct"),mistakesEl=$("mistakes"),accuracyEl=$("accuracy");function stats(){correctEl.textContent=correct;mistakesEl.textContent=mistakes;const t=correct+mistakes;accuracyEl.textContent=t?Math.round(correct/t*100)+"%":"—"}function rand(n){const a=[];for(let i=0;i<n;i++){let v;do{v=1+Math.floor(Math.random()*6)}while(i&&v===a[i-1]);a.push(v)}return a}function speak(p){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(p.join(", "));u.rate=parseFloat(voiceRate.value);u.onstart=()=>speechGuardUntil=performance.now()+600;u.onend=()=>{speechGuardUntil=performance.now()+500;if(mode.value==="timer")armTimer()};speechSynthesis.speak(u)}function show(p){clearTimeout(nextTimer);current=p;idx=0;promptEl.textContent=p.join("   ");statusEl.className="status";statusEl.textContent="Listen, then play.";heardEl.textContent="Heard: —";bar.style.width="0%";speak(p)}function armTimer(){const ms=Math.max(1000,(parseFloat(spacing.value)||5)*1000);nextTimer=setTimeout(nextPrompt,ms)}function nextPrompt(){if(running)show(rand(parseInt(groupSize.value)))}function cents(f,t){return 1200*Math.log2(f/t)}function nearest(f){let bs=null,bc=1e9;for(const s of [6,5,4,3,2,1]){const c=Math.abs(cents(f,hz[s]));if(c<bc){bc=c;bs=s}}return{s:bs,c:bc}}function pitch(buf,sr){let rms=0;for(let i=0;i<buf.length;i++)rms+=buf[i]*buf[i];rms=Math.sqrt(rms/buf.length);if(rms<0.012)return-1;const minLag=Math.floor(sr/360),maxLag=Math.min(Math.floor(sr/72),buf.length-3);let bestLag=-1,best=0;for(let lag=minLag;lag<=maxLag;lag++){let cross=0,e1=0,e2=0;for(let i=0;i<buf.length-lag;i+=2){const a=buf[i],b=buf[i+lag];cross+=a*b;e1+=a*a;e2+=b*b}const corr=cross/Math.sqrt((e1*e2)||1);if(corr>best){best=corr;bestLag=lag}}if(bestLag<0||best<0.72)return-1;return sr/bestLag}function accept(s){const now=performance.now();if(now<speechGuardUntil||now-lastAccepted<360)return;if(stableCandidate!==s){stableCandidate=s;stableSince=now;return}if(now-stableSince<120)return;heardEl.textContent="Heard: "+s;const expected=current[idx];if(s===expected){lastAccepted=now;stableCandidate=null;idx++;bar.style.width=(idx/current.length*100)+"%";statusEl.className="status ok";statusEl.textContent="Good — string "+s;if(idx>=current.length){correct++;stats();statusEl.textContent="Correct ✓";if(mode.value==="correct")armTimer()}}else if(now-lastWrong>850){lastWrong=now;mistakes++;stats();statusEl.className="status bad";statusEl.textContent="Heard "+s+" — expected "+expected}}function loop(){if(!running||!analyser)return;const buf=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(buf);const f=pitch(buf,audioCtx.sampleRate);if(f>0){const n=nearest(f);if(n.c<65)accept(n.s)}raf=requestAnimationFrame(loop)}async function start(){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();await audioCtx.resume();stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:false});src=audioCtx.createMediaStreamSource(stream);analyser=audioCtx.createAnalyser();analyser.fftSize=4096;src.connect(analyser);running=true;startBtn.disabled=true;repeatBtn.disabled=false;nextBtn.disabled=false;stopBtn.disabled=false;nextPrompt();loop()}catch(e){console.error(e);statusEl.className="status bad";statusEl.textContent="Couldn't access microphone. Check browser microphone permission and make sure this page is served over HTTPS."}}function stop(){running=false;clearTimeout(nextTimer);if(raf)cancelAnimationFrame(raf);speechSynthesis.cancel();if(stream)stream.getTracks().forEach(t=>t.stop());if(audioCtx)audioCtx.close();startBtn.disabled=false;repeatBtn.disabled=true;nextBtn.disabled=true;stopBtn.disabled=true;statusEl.className="status";statusEl.textContent="Stopped."}startBtn.onclick=start;repeatBtn.onclick=()=>running&&show(current);nextBtn.onclick=nextPrompt;stopBtn.onclick=stop})();</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111111">
+<title>String Picker</title>
+<style>
+:root{--bg:#101012;--card:#1b1b1f;--card2:#111114;--text:#f7f7f8;--muted:#aaa;--blue:#0a84ff;--green:#30d158;--red:#ff453a;--border:#303036}
+*{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);margin:0}main{max-width:720px;margin:auto;padding:20px 16px 42px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin:12px 0}h1{margin:0 0 5px;font-size:28px}.sub{color:var(--muted);margin:0 0 16px}.version{font-size:11px;color:#777}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:560px){.grid{grid-template-columns:1fr}.buttons{grid-template-columns:1fr 1fr!important}.buttons #startBtn,.buttons #stopBtn{grid-column:span 2}}
+label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}select,input,button{font:inherit;font-size:17px;border-radius:12px;padding:12px}select,input{width:100%;background:var(--card2);color:#fff;border:1px solid var(--border)}button{border:0;background:var(--blue);color:white;font-weight:700}button.secondary{background:#343439}button.danger{background:#6b211e}button:disabled{opacity:.45}.buttons{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:9px}
+.prompt{min-height:118px;display:flex;align-items:center;justify-content:center;gap:15px;flex-wrap:wrap;font-size:clamp(48px,12vw,76px);font-weight:800;text-align:center}.num{display:inline-flex;align-items:center;justify-content:center;min-width:1em;padding:.03em .12em;border-radius:.2em}.num.done{color:var(--green)}.num.now{outline:3px solid var(--blue);outline-offset:4px}.status,.heard{text-align:center;min-height:24px;color:var(--muted)}.status.ok{color:var(--green)}.status.bad{color:var(--red)}.heard{font-size:14px;margin-top:5px}.progress{height:10px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:13px}.progress div{height:100%;width:0;background:var(--blue);transition:width .12s ease}.meterLabel{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:14px}.micmeter{height:7px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:4px}.micmeter div{height:100%;width:0;background:var(--green);transition:width .08s linear}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}.stat{background:var(--card2);border-radius:12px;padding:10px}.stat b{display:block;font-size:24px}.stat span{font-size:12px;color:var(--muted)}.small{color:var(--muted);font-size:13px;line-height:1.5}
+</style>
+</head>
+<body><main>
+<h1>String Picker</h1><p class="sub">Play the displayed open strings in order, without looking. <span class="version">v2</span></p>
+<div class="card"><div class="grid">
+<div><label>Strings per prompt</label><select id="groupSize"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select></div>
+<div><label>Delay after a correct pattern (seconds)</label><input id="spacing" type="number" min="0" max="20" step="0.5" value="1.5"></div>
+<div><label>Voice speed</label><select id="voiceRate"><option value="0.62">Very slow</option><option value="0.78" selected>Slow</option><option value="0.95">Normal</option></select></div>
+<div><label>Detection sensitivity</label><select id="sensitivity"><option value="12">Strict</option><option value="8" selected>Normal</option><option value="5">Sensitive</option></select></div>
+</div></div>
+<div class="card">
+<div id="prompt" class="prompt">—</div>
+<div id="status" class="status">Tap Start and allow microphone access.</div>
+<div id="heard" class="heard">Microphone: off</div>
+<div class="progress"><div id="bar"></div></div>
+<div class="meterLabel"><span>Mic level</span><span id="levelText">—</span></div><div class="micmeter"><div id="micbar"></div></div>
+</div>
+<div class="card"><div class="buttons"><button id="startBtn">Start</button><button id="repeatBtn" class="secondary" disabled>Repeat</button><button id="nextBtn" class="secondary" disabled>Next</button><button id="testBtn" class="secondary" disabled>Test mic</button><button id="stopBtn" class="danger" disabled>Stop</button></div></div>
+<div class="card stats"><div class="stat"><b id="correct">0</b><span>patterns correct</span></div><div class="stat"><b id="mistakes">0</b><span>wrong strings</span></div><div class="stat"><b id="accuracy">—</b><span>accuracy</span></div></div>
+<div class="card small">Standard tuning only: <b>6</b>=low E, <b>5</b>=A, <b>4</b>=D, <b>3</b>=G, <b>2</b>=B, <b>1</b>=high E. Play one open string at a time. The current number is outlined in blue; correct numbers turn green. If the app hears the wrong string it stays on the same number.</div>
+</main>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const hz={1:329.63,2:246.94,3:196.00,4:146.83,5:110.00,6:82.41};
+const order=[6,5,4,3,2,1];
+let stream=null,audioCtx=null,analyser=null,source=null,timer=null,running=false,current=[],idx=0;
+let correct=0,mistakes=0,speechGuardUntil=0,lastDecisionAt=0,lastCandidate=null,candidateFrames=0,lockedCandidate=null,quietFrames=0,testMode=false;
+const groupSize=$("groupSize"),spacing=$("spacing"),voiceRate=$("voiceRate"),sensitivity=$("sensitivity"),promptEl=$("prompt"),statusEl=$("status"),heardEl=$("heard"),bar=$("bar"),micbar=$("micbar"),levelText=$("levelText"),startBtn=$("startBtn"),repeatBtn=$("repeatBtn"),nextBtn=$("nextBtn"),testBtn=$("testBtn"),stopBtn=$("stopBtn"),correctEl=$("correct"),mistakesEl=$("mistakes"),accuracyEl=$("accuracy");
+function stats(){correctEl.textContent=correct;mistakesEl.textContent=mistakes;const t=correct+mistakes;accuracyEl.textContent=t?Math.round(correct/t*100)+"%":"—"}
+function rand(n){const a=[];for(let i=0;i<n;i++){let v;do{v=1+Math.floor(Math.random()*6)}while(i&&v===a[i-1]);a.push(v)}return a}
+function renderPrompt(){promptEl.innerHTML=current.map((n,i)=>`<span class="num ${i<idx?'done':i===idx?'now':''}">${n}</span>`).join('')}
+function speak(p){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(p.join(", "));u.rate=parseFloat(voiceRate.value);u.onstart=()=>{speechGuardUntil=performance.now()+800};u.onend=()=>{speechGuardUntil=performance.now()+450;statusEl.textContent=`Play string ${current[idx]} first.`};speechSynthesis.speak(u)}
+function show(p){clearTimeout(timer);current=p;idx=0;lockedCandidate=null;lastCandidate=null;candidateFrames=0;quietFrames=0;bar.style.width="0%";renderPrompt();statusEl.className="status";statusEl.textContent="Listen…";speak(p)}
+function nextPrompt(){if(running)show(rand(parseInt(groupSize.value,10)))}
+function scheduleNext(){clearTimeout(timer);const ms=Math.max(0,(parseFloat(spacing.value)||0)*1000);timer=setTimeout(nextPrompt,ms)}
+function dbToPower(db){return Math.pow(10,db/10)}
+function peakAround(data,f,bins=2){const binHz=audioCtx.sampleRate/analyser.fftSize;const center=Math.round(f/binHz);let best=-160;for(let i=Math.max(1,center-bins);i<=Math.min(data.length-1,center+bins);i++)if(data[i]>best)best=data[i];return best}
+function analyze(){
+ const freq=new Float32Array(analyser.frequencyBinCount);analyser.getFloatFrequencyData(freq);
+ const binHz=audioCtx.sampleRate/analyser.fftSize;
+ const lo=Math.max(1,Math.floor(65/binHz)),hi=Math.min(freq.length-1,Math.ceil(1200/binHz));
+ let sum=0,count=0,peak=-160;for(let i=lo;i<=hi;i+=3){sum+=freq[i];count++;if(freq[i]>peak)peak=freq[i]}
+ const floor=sum/Math.max(1,count);const contrast=peak-floor;
+ const meter=Math.max(0,Math.min(100,(peak+90)*1.65));micbar.style.width=meter+"%";levelText.textContent=peak>-150?Math.round(peak)+" dB":"quiet";
+ if(testMode){heardEl.textContent=contrast>6?`Mic works — signal detected (${Math.round(peak)} dB)`:`Listening… play a string (${Math.round(peak)} dB)`}
+ if(performance.now()<speechGuardUntil)return null;
+ const scores=[];
+ for(const s of order){
+   const f=hz[s];let power=0;const weights=[1,.42,.22,.12,.07];let fund=-160;
+   for(let h=1;h<=weights.length;h++){if(f*h>1400)break;const d=peakAround(freq,f*h,h===1?3:2);if(h===1)fund=d;power+=weights[h-1]*dbToPower(d)}
+   scores.push({s,power,fund});
+ }
+ scores.sort((a,b)=>b.power-a.power);const best=scores[0],second=scores[1];
+ const bestDb=10*Math.log10(best.power||1e-16),secondDb=10*Math.log10(second.power||1e-16);
+ const minContrast=parseFloat(sensitivity.value);
+ const present=(bestDb-floor)>minContrast && bestDb>-78 && (bestDb-secondDb)>1.0;
+ return present?{s:best.s,db:bestDb,floor,margin:bestDb-secondDb}:null;
+}
+function decide(det){
+ const now=performance.now();
+ if(!det){quietFrames++;if(quietFrames>=3)lockedCandidate=null;lastCandidate=null;candidateFrames=0;if(!testMode)heardEl.textContent="Listening…";return}
+ quietFrames=0;heardEl.textContent=`Heard: string ${det.s}`;
+ if(det.s===lastCandidate)candidateFrames++;else{lastCandidate=det.s;candidateFrames=1}
+ if(candidateFrames<2)return;
+ if(lockedCandidate===det.s)return;
+ if(now-lastDecisionAt<250)return;
+ lockedCandidate=det.s;lastDecisionAt=now;
+ if(testMode){statusEl.className="status ok";statusEl.textContent=`Microphone detected string ${det.s}.`;return}
+ const expected=current[idx];
+ if(det.s===expected){
+   idx++;bar.style.width=(idx/current.length*100)+"%";renderPrompt();statusEl.className="status ok";
+   if(idx>=current.length){correct++;stats();statusEl.textContent="Correct ✓ — next pattern";scheduleNext()}
+   else statusEl.textContent=`Correct. Now play string ${current[idx]}.`;
+ }else{
+   mistakes++;stats();statusEl.className="status bad";statusEl.textContent=`Heard ${det.s}; expected ${expected}. Try ${expected} again.`;
+ }
+}
+function loop(){if(!running||!analyser)return;decide(analyze());timerLoop=setTimeout(loop,70)}
+let timerLoop=null;
+async function start(){
+ try{
+   audioCtx=new(window.AudioContext||window.webkitAudioContext)();await audioCtx.resume();
+   stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:false});
+   source=audioCtx.createMediaStreamSource(stream);analyser=audioCtx.createAnalyser();analyser.fftSize=32768;analyser.smoothingTimeConstant=.18;analyser.minDecibels=-110;analyser.maxDecibels=-10;source.connect(analyser);
+   running=true;testMode=false;startBtn.disabled=true;repeatBtn.disabled=false;nextBtn.disabled=false;testBtn.disabled=false;stopBtn.disabled=false;heardEl.textContent="Microphone: active";nextPrompt();loop();
+ }catch(e){console.error(e);statusEl.className="status bad";statusEl.textContent="Could not access the microphone. In Safari, allow Microphone for this site, then reload."}
+}
+function stop(){running=false;clearTimeout(timer);clearTimeout(timerLoop);speechSynthesis.cancel();if(stream)stream.getTracks().forEach(t=>t.stop());if(audioCtx)audioCtx.close();stream=audioCtx=analyser=source=null;startBtn.disabled=false;repeatBtn.disabled=true;nextBtn.disabled=true;testBtn.disabled=true;stopBtn.disabled=true;micbar.style.width="0%";levelText.textContent="—";heardEl.textContent="Microphone: off";statusEl.className="status";statusEl.textContent="Stopped."}
+startBtn.onclick=start;repeatBtn.onclick=()=>{if(running){testMode=false;show(current)}};nextBtn.onclick=()=>{if(running){testMode=false;nextPrompt()}};testBtn.onclick=()=>{if(!running)return;testMode=!testMode;if(testMode){speechSynthesis.cancel();speechGuardUntil=0;statusEl.className="status";statusEl.textContent="Mic test: play any open string.";heardEl.textContent="Listening…"}else{statusEl.textContent=`Resume: play string ${current[idx]}.`}};stopBtn.onclick=stop;
+})();
+</script></body></html>
