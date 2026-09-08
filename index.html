@@ -5,10 +5,10 @@
 <title>String Picker</title>
 <style>
 :root{--bg:#101012;--card:#1b1b1f;--card2:#111114;--text:#f7f7f8;--muted:#aaa;--blue:#0a84ff;--green:#30d158;--red:#ff453a;--border:#303036}
-*{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);margin:0}main{max-width:720px;margin:auto;padding:20px 16px 42px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin:12px 0}h1{margin:0 0 5px;font-size:28px}.sub{color:var(--muted);margin:0 0 16px}.version{font-size:11px;color:#777}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:560px){.grid{grid-template-columns:1fr}.buttons{grid-template-columns:1fr 1fr!important}.buttons #startBtn,.buttons #stopBtn{grid-column:span 2}}label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}select,input,button{font:inherit;font-size:17px;border-radius:12px;padding:12px}select,input{width:100%;background:var(--card2);color:#fff;border:1px solid var(--border)}button{border:0;background:var(--blue);color:#fff;font-weight:700}button.secondary{background:#343439}button.danger{background:#6b211e}button:disabled{opacity:.45}.buttons{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:9px}.prompt{min-height:118px;display:flex;align-items:center;justify-content:center;gap:15px;flex-wrap:wrap;font-size:clamp(48px,12vw,76px);font-weight:800;text-align:center}.num{display:inline-flex;align-items:center;justify-content:center;min-width:1em;padding:.03em .12em;border-radius:.2em}.num.done{color:var(--green)}.num.now{outline:3px solid var(--blue);outline-offset:4px}.status,.heard{text-align:center;min-height:24px;color:var(--muted)}.status.ok{color:var(--green)}.status.bad{color:var(--red)}.heard{font-size:14px;margin-top:5px}.progress{height:10px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:13px}.progress div{height:100%;width:0;background:var(--blue);transition:width .12s ease}.meterLabel{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:14px}.micmeter{height:7px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:4px}.micmeter div{height:100%;width:0;background:var(--green);transition:width .06s linear}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}.stat{background:var(--card2);border-radius:12px;padding:10px}.stat b{display:block;font-size:24px}.stat span{font-size:12px;color:var(--muted)}.small{color:var(--muted);font-size:13px;line-height:1.5}
+*{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);margin:0}main{max-width:720px;margin:auto;padding:20px 16px 42px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin:12px 0}h1{margin:0 0 5px;font-size:28px}.sub{color:var(--muted);margin:0 0 16px}.version{font-size:11px;color:#777}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:560px){.grid{grid-template-columns:1fr}.buttons{grid-template-columns:1fr 1fr!important}.buttons #startBtn,.buttons #stopBtn{grid-column:span 2}}label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}select,input,button{font:inherit;font-size:17px;border-radius:12px;padding:12px}select,input{width:100%;background:var(--card2);color:#fff;border:1px solid var(--border)}button{border:0;background:var(--blue);color:#fff;font-weight:700}button.secondary{background:#343439}button.danger{background:#6b211e}button:disabled{opacity:.45}.buttons{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:9px}.prompt{min-height:118px;display:flex;align-items:center;justify-content:center;gap:15px;flex-wrap:wrap;font-size:clamp(48px,12vw,76px);font-weight:800;text-align:center}.num{display:inline-flex;align-items:center;justify-content:center;min-width:1em;padding:.03em .12em;border-radius:.2em}.num.done{color:var(--green)}.num.now{outline:3px solid var(--blue);outline-offset:4px}.status,.heard{text-align:center;min-height:24px;color:var(--muted)}.status.ok{color:var(--green)}.status.bad{color:var(--red)}.heard{font-size:14px;margin-top:5px}.progress{height:10px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:13px}.progress div{height:100%;width:0;background:var(--blue);transition:width .08s ease}.meterLabel{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:14px}.micmeter{height:7px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:4px}.micmeter div{height:100%;width:0;background:var(--green);transition:width .04s linear}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}.stat{background:var(--card2);border-radius:12px;padding:10px}.stat b{display:block;font-size:24px}.stat span{font-size:12px;color:var(--muted)}.small{color:var(--muted);font-size:13px;line-height:1.5}
 </style></head>
 <body><main>
-<h1>String Picker</h1><p class="sub">Play the displayed open strings in order, without looking. <span class="version">v6</span></p>
+<h1>String Picker</h1><p class="sub">Play the displayed open strings in order, without looking. <span class="version">v7</span></p>
 <div class="card"><div class="grid">
 <div><label>Strings per prompt</label><select id="groupSize"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select></div>
 <div><label>Delay after a correct pattern (seconds)</label><input id="spacing" type="number" min="0" max="20" step="0.5" value="1.5"></div>
@@ -18,85 +18,72 @@
 <div class="card"><div id="prompt" class="prompt">—</div><div id="status" class="status">Tap Start and allow microphone access.</div><div id="heard" class="heard">Microphone: off</div><div class="progress"><div id="bar"></div></div><div class="meterLabel"><span>Mic level</span><span id="levelText">—</span></div><div class="micmeter"><div id="micbar"></div></div></div>
 <div class="card"><div class="buttons"><button id="startBtn">Start</button><button id="repeatBtn" class="secondary" disabled>Repeat</button><button id="nextBtn" class="secondary" disabled>Next</button><button id="testBtn" class="secondary" disabled>Test mic</button><button id="stopBtn" class="danger" disabled>Stop</button></div></div>
 <div class="card stats"><div class="stat"><b id="correct">0</b><span>patterns correct</span></div><div class="stat"><b id="mistakes">0</b><span>wrong strings</span></div><div class="stat"><b id="accuracy">—</b><span>accuracy</span></div></div>
-<div class="card small"><b>v6 detection:</b> the expected string gets priority. A correct note no longer has to be detected in consecutive analysis frames; the app collects evidence over roughly half a second. It also accepts a wider tuning range and is deliberately much more cautious about calling a different string “wrong.” Standard tuning: <b>6</b>=low E, <b>5</b>=A, <b>4</b>=D, <b>3</b>=G, <b>2</b>=B, <b>1</b>=high E.</div>
+<div class="card small"><b>v7:</b> fast-sequence detection. After one correct string, the next expected string is checked immediately — there is no 240 ms lockout anymore. The app samples roughly every 35 ms and can accept either one very strong match or two moderate matches close together. Residual ringing from the previous string is treated as background instead of blocking the next note.</div>
 </main>
 <script>
 (()=>{
 const $=id=>document.getElementById(id), hz={1:329.63,2:246.94,3:196,4:146.83,5:110,6:82.41}, strings=[6,5,4,3,2,1];
 const profiles={
- strict:{gate:.00125,ratio:2.15,accept:.49,rightHits:3,wrong:.76,wrongMargin:.16,wrongHits:5},
- balanced:{gate:.00072,ratio:1.75,accept:.39,rightHits:2,wrong:.73,wrongMargin:.17,wrongHits:5},
- forgiving:{gate:.00052,ratio:1.55,accept:.33,rightHits:2,wrong:.75,wrongMargin:.19,wrongHits:6}
+ strict:{gate:.00120,ratio:2.05,accept:.50,strong:.66,rise:.075,wrong:.78,wrongMargin:.18},
+ balanced:{gate:.00070,ratio:1.70,accept:.38,strong:.57,rise:.055,wrong:.75,wrongMargin:.18},
+ forgiving:{gate:.00050,ratio:1.50,accept:.32,strong:.51,rise:.045,wrong:.77,wrongMargin:.20}
 };
-let stream,audioCtx,analyser,source,loopTimer,nextTimer,running=false,current=[],idx=0,correct=0,mistakes=0,testMode=false,speechGuardUntil=0,noiseFloor=.00042;
-let history=[],ignoreWrongUntil=0,lastAcceptedAt=0;
+let stream,audioCtx,analyser,source,loopTimer,nextTimer,running=false,current=[],idx=0,correct=0,mistakes=0,testMode=false,speechGuardUntil=0,noiseFloor=.00040;
+let history=[],ignoreWrongUntil=0,lastAcceptedAt=0,expectedBaseline=0,lastAcceptedString=null;
 const groupSize=$("groupSize"),spacing=$("spacing"),voiceRate=$("voiceRate"),detection=$("detection"),promptEl=$("prompt"),statusEl=$("status"),heardEl=$("heard"),bar=$("bar"),micbar=$("micbar"),levelText=$("levelText"),startBtn=$("startBtn"),repeatBtn=$("repeatBtn"),nextBtn=$("nextBtn"),testBtn=$("testBtn"),stopBtn=$("stopBtn"),correctEl=$("correct"),mistakesEl=$("mistakes"),accuracyEl=$("accuracy");
 function stats(){correctEl.textContent=correct;mistakesEl.textContent=mistakes;const t=correct+mistakes;accuracyEl.textContent=t?Math.round(correct/t*100)+"%":"—"}
 function rand(n){const a=[];for(let i=0;i<n;i++){let v;do{v=1+Math.floor(Math.random()*6)}while(i&&v===a[i-1]);a.push(v)}return a}
 function render(){promptEl.innerHTML=current.map((n,i)=>`<span class="num ${i<idx?'done':i===idx?'now':''}">${n}</span>`).join('')}
 function clearEvidence(){history=[]}
-function speak(p){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(p.join(', '));u.rate=parseFloat(voiceRate.value);u.onstart=()=>speechGuardUntil=performance.now()+850;u.onend=()=>{speechGuardUntil=performance.now()+430;statusEl.textContent=`Play string ${current[idx]} first.`};speechSynthesis.speak(u)}
-function show(p){clearTimeout(nextTimer);current=p;idx=0;clearEvidence();ignoreWrongUntil=performance.now()+500;bar.style.width='0%';render();statusEl.className='status';statusEl.textContent='Listen…';heardEl.textContent='Microphone: active';speak(p)}
+function speak(p){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(p.join(', '));u.rate=parseFloat(voiceRate.value);u.onstart=()=>speechGuardUntil=performance.now()+850;u.onend=()=>{speechGuardUntil=performance.now()+420;statusEl.textContent=`Play string ${current[idx]} first.`};speechSynthesis.speak(u)}
+function show(p){clearTimeout(nextTimer);current=p;idx=0;clearEvidence();ignoreWrongUntil=performance.now()+450;expectedBaseline=0;lastAcceptedString=null;bar.style.width='0%';render();statusEl.className='status';statusEl.textContent='Listen…';heardEl.textContent='Microphone: active';speak(p)}
 function nextPrompt(){if(running)show(rand(parseInt(groupSize.value,10)))}
 function scheduleNext(){clearTimeout(nextTimer);nextTimer=setTimeout(nextPrompt,Math.max(0,(parseFloat(spacing.value)||0)*1000))}
 function corr(buf,lag){let xy=0,xx=0,yy=0;const end=buf.length-lag;for(let i=0;i<end;i+=2){const a=buf[i],b=buf[i+lag];xy+=a*b;xx+=a*a;yy+=b*b}return xy/Math.sqrt((xx*yy)||1)}
 function scoreFor(buf,s){
- const sr=audioCtx.sampleRate,target=sr/hz[s],radius=Math.max(6,Math.round(target*.08));
- let best=-1,bestLag=Math.round(target);
- for(let lag=Math.max(8,Math.round(target-radius));lag<=Math.round(target+radius);lag++){
-  const c=corr(buf,lag);if(c>best){best=c;bestLag=lag}
- }
- const c2=(bestLag*2<buf.length-8)?corr(buf,bestLag*2):best;
- const c3=(bestLag*3<buf.length-8)?corr(buf,bestLag*3):best;
- // Fundamental period matters most, but repeated periods make the score more robust
- // when the phone emphasizes harmonics differently depending on pick position.
- return {s,score:.68*best+.22*c2+.10*c3,hz:sr/bestLag,base:best};
+ const sr=audioCtx.sampleRate,target=sr/hz[s],radius=Math.max(5,Math.round(target*.09));let best=-1,bestLag=Math.round(target);
+ for(let lag=Math.max(8,Math.round(target-radius));lag<=Math.round(target+radius);lag++){const c=corr(buf,lag);if(c>best){best=c;bestLag=lag}}
+ const c2=(bestLag*2<buf.length-8)?corr(buf,bestLag*2):best,c3=(bestLag*3<buf.length-8)?corr(buf,bestLag*3):best;
+ return{s,score:.70*best+.20*c2+.10*c3,hz:sr/bestLag,base:best};
 }
 function analyze(){
- const raw=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(raw);
- let mean=0;for(let i=0;i<raw.length;i++)mean+=raw[i];mean/=raw.length;
- let rms=0;for(let i=0;i<raw.length;i++){raw[i]-=mean;rms+=raw[i]*raw[i]}rms=Math.sqrt(rms/raw.length);
+ const raw=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(raw);let mean=0;for(let i=0;i<raw.length;i++)mean+=raw[i];mean/=raw.length;let rms=0;for(let i=0;i<raw.length;i++){raw[i]-=mean;rms+=raw[i]*raw[i]}rms=Math.sqrt(rms/raw.length);
  micbar.style.width=Math.min(100,Math.log10(1+rms*3500)*47)+'%';levelText.textContent=rms.toFixed(4);
- const p=profiles[detection.value]||profiles.balanced,gate=Math.max(p.gate,noiseFloor*p.ratio);
- if(rms<gate*.78)noiseFloor=noiseFloor*.992+rms*.008;
- if(performance.now()<speechGuardUntil||rms<gate)return null;
- const scores=strings.map(s=>scoreFor(raw,s)).sort((a,b)=>b.score-a.score);
- return {scores,best:scores[0],rms,gate,t:performance.now()};
+ const p=profiles[detection.value]||profiles.balanced,gate=Math.max(p.gate,noiseFloor*p.ratio);if(rms<gate*.78)noiseFloor=noiseFloor*.994+rms*.006;if(performance.now()<speechGuardUntil||rms<gate)return null;
+ const scores=strings.map(s=>scoreFor(raw,s)).sort((a,b)=>b.score-a.score);return{scores,best:scores[0],rms,t:performance.now()};
 }
-function recent(ms=520){const cutoff=performance.now()-ms;history=history.filter(x=>x.t>=cutoff);return history}
-function hitsFor(s,threshold,ms=520){return recent(ms).filter(h=>{const x=h.scores.find(v=>v.s===s);return x&&x.score>=threshold}).length}
-function avgScoreFor(s,ms=520){const h=recent(ms),vals=h.map(f=>f.scores.find(v=>v.s===s)?.score).filter(v=>Number.isFinite(v));if(!vals.length)return 0;vals.sort((a,b)=>b-a);const top=vals.slice(0,Math.min(4,vals.length));return top.reduce((a,b)=>a+b,0)/top.length}
-function bestConsistentWrong(expected,p){
- const h=recent(620);let winner=null;
- for(const s of strings){if(s===expected)continue;const vals=h.map(f=>f.scores.find(v=>v.s===s)?.score||0);const hits=vals.filter(v=>v>=p.wrong).length;const avg=vals.sort((a,b)=>b-a).slice(0,Math.min(4,vals.length)).reduce((a,b)=>a+b,0)/Math.max(1,Math.min(4,vals.length));if(hits>=p.wrongHits&&(!winner||avg>winner.avg))winner={s,hits,avg}}
- return winner;
+function recent(ms=240){const cutoff=performance.now()-ms;history=history.filter(x=>x.t>=cutoff);return history}
+function scoresFor(s,ms=240){return recent(ms).map(f=>f.scores.find(v=>v.s===s)?.score||0)}
+function acceptCurrent(frame,reason){
+ const accepted=current[idx];idx++;lastAcceptedString=accepted;lastAcceptedAt=performance.now();ignoreWrongUntil=performance.now()+320;
+ // Keep just a tiny amount of context. The score of the NEXT expected string in this
+ // same frame becomes its ringing/background baseline, so a quick new pluck can be
+ // recognized as a rise above what was already present.
+ if(idx<current.length){const next=current[idx];expectedBaseline=frame.scores.find(v=>v.s===next)?.score||0}else expectedBaseline=0;
+ clearEvidence();bar.style.width=(idx/current.length*100)+'%';render();statusEl.className='status ok';
+ if(idx>=current.length){correct++;stats();statusEl.textContent='Correct ✓ — next pattern';scheduleNext()}else statusEl.textContent=`Correct${reason?' ('+reason+')':''}. Now play string ${current[idx]}.`;
 }
 function decide(frame){
  if(!frame){if(!testMode)heardEl.textContent='Listening…';return}
  history.push(frame);recent();const p=profiles[detection.value]||profiles.balanced;
- if(testMode){const b=frame.best;heardEl.textContent=`Best match: string ${b.s} (~${Math.round(b.hz)} Hz), confidence ${Math.round(b.score*100)}%`;if(hitsFor(b.s,p.accept,480)>=2){statusEl.className='status ok';statusEl.textContent=`Detected string ${b.s}.`}return}
- const expected=current[idx],expNow=frame.scores.find(x=>x.s===expected),rightHits=hitsFor(expected,p.accept,520),rightAvg=avgScoreFor(expected,520);
- heardEl.textContent=`Checking string ${expected} — confidence ${Math.max(0,Math.min(99,Math.round((expNow?.score||0)*100)))}%`;
- // Correct notes get priority. Two good observations anywhere in the recent window are
- // enough in Balanced/Forgiving mode, so one bad analysis frame does not lose the pluck.
- if(rightHits>=p.rightHits && rightAvg>=p.accept-.025 && performance.now()-lastAcceptedAt>240){
-  idx++;lastAcceptedAt=performance.now();ignoreWrongUntil=performance.now()+520;clearEvidence();bar.style.width=(idx/current.length*100)+'%';render();statusEl.className='status ok';
-  if(idx>=current.length){correct++;stats();statusEl.textContent='Correct ✓ — next pattern';scheduleNext()}else statusEl.textContent=`Correct. Now play string ${current[idx]}.`;
-  return;
- }
- // Residual ringing from the previously-correct string should not be counted as a mistake.
+ if(testMode){const b=frame.best;heardEl.textContent=`Best match: string ${b.s} (~${Math.round(b.hz)} Hz), confidence ${Math.round(b.score*100)}%`;if(b.score>=p.strong){statusEl.className='status ok';statusEl.textContent=`Detected string ${b.s}.`}return}
+ const expected=current[idx],exp=frame.scores.find(v=>v.s===expected),vals=scoresFor(expected,210),good=vals.filter(v=>v>=p.accept),peak=Math.max(0,...vals),rise=(exp?.score||0)-expectedBaseline;
+ heardEl.textContent=`Checking string ${expected} — confidence ${Math.max(0,Math.min(99,Math.round((exp?.score||0)*100)))}%`;
+ // Fast path: one very strong frame, or a clear rise above the residual-ringing baseline.
+ if(exp && (exp.score>=p.strong || (exp.score>=p.accept && rise>=p.rise)) && performance.now()-lastAcceptedAt>55){acceptCurrent(frame,'fast');return}
+ // Normal path: two moderate observations within ~210 ms. They do not have to be consecutive.
+ if(good.length>=2 && peak>=p.accept+.025 && performance.now()-lastAcceptedAt>70){acceptCurrent(frame,'confirmed');return}
+ // Wrong notes are intentionally slow/conservative so rapid transitions are not punished.
  if(performance.now()<ignoreWrongUntil)return;
- const wrong=bestConsistentWrong(expected,p);
- if(wrong){const expAvg=avgScoreFor(expected,620);if(wrong.avg-expAvg>=p.wrongMargin){mistakes++;stats();statusEl.className='status bad';statusEl.textContent=`Heard string ${wrong.s}; expected ${expected}. Try ${expected} again.`;clearEvidence();ignoreWrongUntil=performance.now()+350}}
+ const h=recent(420);let wrong=null;
+ for(const s of strings){if(s===expected||s===lastAcceptedString)continue;const vals=h.map(f=>f.scores.find(v=>v.s===s)?.score||0),hits=vals.filter(v=>v>=p.wrong).length;if(hits<4)continue;const avg=vals.sort((a,b)=>b-a).slice(0,4).reduce((a,b)=>a+b,0)/4;const expAvg=scoresFor(expected,420).sort((a,b)=>b-a).slice(0,4);const ea=expAvg.length?expAvg.reduce((a,b)=>a+b,0)/expAvg.length:0;if(avg-ea>=p.wrongMargin&&(!wrong||avg>wrong.avg))wrong={s,avg}}
+ if(wrong){mistakes++;stats();statusEl.className='status bad';statusEl.textContent=`Heard string ${wrong.s}; expected ${expected}. Try ${expected} again.`;clearEvidence();ignoreWrongUntil=performance.now()+260}
 }
-function loop(){if(!running||!analyser)return;decide(analyze());loopTimer=setTimeout(loop,72)}
+function loop(){if(!running||!analyser)return;decide(analyze());loopTimer=setTimeout(loop,35)}
 async function start(){try{
- audioCtx=new(window.AudioContext||window.webkitAudioContext)();await audioCtx.resume();
- stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false,channelCount:1},video:false});
- source=audioCtx.createMediaStreamSource(stream);analyser=audioCtx.createAnalyser();analyser.fftSize=8192;analyser.smoothingTimeConstant=0;source.connect(analyser);
- noiseFloor=.00042;clearEvidence();running=true;testMode=false;startBtn.disabled=true;repeatBtn.disabled=false;nextBtn.disabled=false;testBtn.disabled=false;stopBtn.disabled=false;nextPrompt();loop();
+ audioCtx=new(window.AudioContext||window.webkitAudioContext)();await audioCtx.resume();stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false,channelCount:1},video:false});source=audioCtx.createMediaStreamSource(stream);analyser=audioCtx.createAnalyser();analyser.fftSize=4096;analyser.smoothingTimeConstant=0;source.connect(analyser);noiseFloor=.00040;clearEvidence();running=true;testMode=false;startBtn.disabled=true;repeatBtn.disabled=false;nextBtn.disabled=false;testBtn.disabled=false;stopBtn.disabled=false;nextPrompt();loop();
 }catch(e){console.error(e);statusEl.className='status bad';statusEl.textContent='Could not access the microphone. In Safari, allow Microphone for this site, then reload.'}}
 function stop(){running=false;clearTimeout(loopTimer);clearTimeout(nextTimer);speechSynthesis.cancel();if(stream)stream.getTracks().forEach(t=>t.stop());if(audioCtx)audioCtx.close();stream=audioCtx=analyser=source=null;clearEvidence();startBtn.disabled=false;repeatBtn.disabled=true;nextBtn.disabled=true;testBtn.disabled=true;stopBtn.disabled=true;heardEl.textContent='Microphone: off';micbar.style.width='0%';levelText.textContent='—';statusEl.className='status';statusEl.textContent='Stopped.'}
-startBtn.onclick=start;repeatBtn.onclick=()=>{if(running){testMode=false;show(current)}};nextBtn.onclick=()=>{if(running){testMode=false;nextPrompt()}};testBtn.onclick=()=>{if(!running)return;testMode=!testMode;clearEvidence();if(testMode){speechSynthesis.cancel();speechGuardUntil=0;statusEl.className='status';statusEl.textContent='Mic test: play any open string normally.';heardEl.textContent='Listening…'}else{ignoreWrongUntil=performance.now()+450;statusEl.textContent=`Resume: play string ${current[idx]}.`}};stopBtn.onclick=stop;
+startBtn.onclick=start;repeatBtn.onclick=()=>{if(running){testMode=false;show(current)}};nextBtn.onclick=()=>{if(running){testMode=false;nextPrompt()}};testBtn.onclick=()=>{if(!running)return;testMode=!testMode;if(testMode){speechSynthesis.cancel();speechGuardUntil=0;statusEl.className='status';statusEl.textContent='Mic test: play any open string.';heardEl.textContent='Listening…'}else statusEl.textContent=`Resume: play string ${current[idx]}.`};stopBtn.onclick=stop;
 })();
 </script></body></html>
