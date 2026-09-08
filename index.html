@@ -8,17 +8,17 @@
 *{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);margin:0}main{max-width:720px;margin:auto;padding:20px 16px 42px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin:12px 0}h1{margin:0 0 5px;font-size:28px}.sub{color:var(--muted);margin:0 0 16px}.version{font-size:11px;color:#777}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:560px){.grid{grid-template-columns:1fr}.buttons{grid-template-columns:1fr 1fr!important}.buttons #startBtn,.buttons #stopBtn{grid-column:span 2}}label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}select,input,button{font:inherit;font-size:17px;border-radius:12px;padding:12px}select,input{width:100%;background:var(--card2);color:#fff;border:1px solid var(--border)}button{border:0;background:var(--blue);color:#fff;font-weight:700}button.secondary{background:#343439}button.danger{background:#6b211e}button:disabled{opacity:.45}.buttons{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:9px}.prompt{min-height:118px;display:flex;align-items:center;justify-content:center;gap:15px;flex-wrap:wrap;font-size:clamp(48px,12vw,76px);font-weight:800;text-align:center}.num{display:inline-flex;align-items:center;justify-content:center;min-width:1em;padding:.03em .12em;border-radius:.2em}.num.done{color:var(--green)}.num.now{outline:3px solid var(--blue);outline-offset:4px}.status,.heard,.debug{text-align:center;min-height:24px;color:var(--muted)}.status.ok{color:var(--green)}.status.bad{color:var(--red)}.heard{font-size:14px;margin-top:5px}.debug{font-size:12px;min-height:18px}.progress{height:10px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:13px}.progress div{height:100%;width:0;background:var(--blue);transition:width .08s ease}.meterLabel{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:14px}.micmeter{height:7px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:4px}.micmeter div{height:100%;width:0;background:var(--green);transition:width .04s linear}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}.stat{background:var(--card2);border-radius:12px;padding:10px}.stat b{display:block;font-size:24px}.stat span{font-size:12px;color:var(--muted)}.small{color:var(--muted);font-size:13px;line-height:1.5}
 </style></head>
 <body><main>
-<h1>String Picker</h1><p class="sub">Play the displayed open strings in order, without looking. <span class="version">v9</span></p>
+<h1>String Picker</h1><p class="sub">Play the displayed open strings in order, without looking. <span class="version">v10</span></p>
 <div class="card"><div class="grid">
 <div><label>Strings per prompt</label><select id="groupSize"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select></div>
 <div><label>Delay after a correct pattern (seconds)</label><input id="spacing" type="number" min="0" max="20" step="0.5" value="1.2"></div>
 <div><label>Voice speed</label><select id="voiceRate"><option value="0.62">Very slow</option><option value="0.78" selected>Slow</option><option value="0.95">Normal</option></select></div>
-<div><label>Detection</label><select id="detection"><option value="strict">Strict</option><option value="balanced" selected>Balanced</option><option value="forgiving">Forgiving</option></select></div>
+<div><label>Detection</label><select id="detection"><option value="strict">Strict</option><option value="balanced" selected>Balanced</option><option value="forgiving">Quiet room / soft picking</option></select></div>
 </div></div>
 <div class="card"><div id="prompt" class="prompt">—</div><div id="status" class="status">Tap Start and allow microphone access.</div><div id="heard" class="heard">Microphone: off</div><div id="debug" class="debug"></div><div class="progress"><div id="bar"></div></div><div class="meterLabel"><span>Mic level</span><span id="levelText">—</span></div><div class="micmeter"><div id="micbar"></div></div></div>
 <div class="card"><div class="buttons"><button id="startBtn">Start</button><button id="repeatBtn" class="secondary" disabled>Repeat</button><button id="nextBtn" class="secondary" disabled>Next</button><button id="testBtn" class="secondary" disabled>Test mic</button><button id="stopBtn" class="danger" disabled>Stop</button></div></div>
 <div class="card stats"><div class="stat"><b id="correct">0</b><span>patterns correct</span></div><div class="stat"><b id="mistakes">0</b><span>wrong strings</span></div><div class="stat"><b id="accuracy">—</b><span>accuracy</span></div></div>
-<div class="card small"><b>v9:</b> completely new detector. It now estimates the actual fundamental pitch with a YIN-style algorithm, and each pluck creates one note event. A ringing note cannot automatically satisfy later numbers. Fast successive notes can still create new events from a fresh attack or a strong pitch change.</div>
+<div class="card small"><b>v10:</b> sensitivity is now calibrated to the room when you press Start. Keep the guitar quiet for about half a second while it calibrates. The pitch detector can then analyze much softer notes without simply lowering a fixed threshold and becoming noisy.</div>
 </main>
 <script>
 (()=>{
@@ -26,19 +26,19 @@ const $=id=>document.getElementById(id);
 const targetHz={1:329.63,2:246.94,3:196.00,4:146.83,5:110.00,6:82.41};
 const strings=[6,5,4,3,2,1];
 const profiles={
- strict:{gate:.00115,ratio:2.1,yin:.84,cents:105,stable:2,attack:1.40,shift:0.16},
- balanced:{gate:.00065,ratio:1.7,yin:.76,cents:135,stable:2,attack:1.28,shift:0.12},
- forgiving:{gate:.00048,ratio:1.5,yin:.69,cents:165,stable:2,attack:1.20,shift:0.10}
+ strict:{gate:.00028,ratio:1.85,yin:.82,cents:110,stable:2,attack:1.24,shift:0.15},
+ balanced:{gate:.00012,ratio:1.35,yin:.72,cents:145,stable:2,attack:1.15,shift:0.12},
+ forgiving:{gate:.00008,ratio:1.18,yin:.66,cents:175,stable:2,attack:1.10,shift:0.10}
 };
 let stream=null,audioCtx=null,analyser=null,source=null,loopTimer=null,nextTimer=null;
-let running=false,testMode=false,current=[],idx=0,correct=0,mistakes=0,speechGuardUntil=0,noiseFloor=.00038;
+let running=false,testMode=false,current=[],idx=0,correct=0,mistakes=0,speechGuardUntil=0,noiseFloor=.00010;
 let prevShortRms=0,eventOpen=false,eventConsumed=false,eventStarted=0,eventCandidates=[],lastAcceptedString=null,lastAcceptedPitch=0,lastAcceptedAt=0;
 let shiftCandidate=null,shiftFrames=0;
 const groupSize=$("groupSize"),spacing=$("spacing"),voiceRate=$("voiceRate"),detection=$("detection"),promptEl=$("prompt"),statusEl=$("status"),heardEl=$("heard"),debugEl=$("debug"),bar=$("bar"),micbar=$("micbar"),levelText=$("levelText"),startBtn=$("startBtn"),repeatBtn=$("repeatBtn"),nextBtn=$("nextBtn"),testBtn=$("testBtn"),stopBtn=$("stopBtn"),correctEl=$("correct"),mistakesEl=$("mistakes"),accuracyEl=$("accuracy");
 function stats(){correctEl.textContent=correct;mistakesEl.textContent=mistakes;const t=correct+mistakes;accuracyEl.textContent=t?Math.round(correct/t*100)+"%":"—"}
 function rand(n){const a=[1,2,3,4,5,6];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a.slice(0,n)}
 function render(){promptEl.innerHTML=current.map((n,i)=>`<span class="num ${i<idx?'done':i===idx?'now':''}">${n}</span>`).join('')}
-function speak(p){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(p.join(', '));u.rate=parseFloat(voiceRate.value);u.onstart=()=>speechGuardUntil=performance.now()+900;u.onend=()=>{speechGuardUntil=performance.now()+380;statusEl.textContent=`Play string ${current[idx]} first.`};speechSynthesis.speak(u)}
+function speak(p){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(p.join(', '));u.rate=parseFloat(voiceRate.value);u.onstart=()=>speechGuardUntil=performance.now()+900;u.onend=()=>{speechGuardUntil=performance.now()+350;statusEl.textContent=`Play string ${current[idx]} first.`};speechSynthesis.speak(u)}
 function resetEvent(){eventOpen=false;eventConsumed=false;eventStarted=0;eventCandidates=[];shiftCandidate=null;shiftFrames=0}
 function show(p){clearTimeout(nextTimer);current=p;idx=0;resetEvent();lastAcceptedString=null;lastAcceptedPitch=0;lastAcceptedAt=0;bar.style.width='0%';render();statusEl.className='status';statusEl.textContent='Listen…';heardEl.textContent='Microphone: active';debugEl.textContent='';speak(p)}
 function nextPrompt(){if(running)show(rand(parseInt(groupSize.value,10)))}
@@ -49,36 +49,32 @@ function yinPitch(buf,sr){
  const minF=70,maxF=380,tauMin=Math.max(2,Math.floor(sr/maxF)),tauMax=Math.min(Math.floor(sr/minF),buf.length-4);
  const n=Math.min(2048,buf.length-tauMax-2);if(n<800)return null;
  const diff=new Float32Array(tauMax+1);
- for(let tau=1;tau<=tauMax;tau++){
-  let sum=0;for(let i=0;i<n;i+=2){const d=buf[i]-buf[i+tau];sum+=d*d}diff[tau]=sum;
- }
+ for(let tau=1;tau<=tauMax;tau++){let sum=0;for(let i=0;i<n;i+=2){const d=buf[i]-buf[i+tau];sum+=d*d}diff[tau]=sum}
  let run=0,bestTau=-1,bestVal=1e9;
- for(let tau=1;tau<=tauMax;tau++){
-  run+=diff[tau];const v=run>0?diff[tau]*tau/run:1;diff[tau]=v;
-  if(tau>=tauMin&&v<bestVal){bestVal=v;bestTau=tau}
- }
- let tau=-1;
- for(let t=tauMin;t<tauMax-1;t++){
-  if(diff[t]<0.18&&diff[t]<=diff[t-1]&&diff[t]<diff[t+1]){tau=t;break}
- }
+ for(let tau=1;tau<=tauMax;tau++){run+=diff[tau];const v=run>0?diff[tau]*tau/run:1;diff[tau]=v;if(tau>=tauMin&&v<bestVal){bestVal=v;bestTau=tau}}
+ let tau=-1;for(let t=tauMin;t<tauMax-1;t++){if(diff[t]<0.20&&diff[t]<=diff[t-1]&&diff[t]<diff[t+1]){tau=t;break}}
  if(tau<0)tau=bestTau;if(tau<0)return null;
- let better=tau;const a=diff[tau-1]??diff[tau],b=diff[tau],c=diff[tau+1]??diff[tau];const den=(2*b-a-c);if(Math.abs(den)>1e-8)better=tau+(c-a)/(2*den);
- const freq=sr/better,clarity=Math.max(0,Math.min(1,1-b));
- return{freq,clarity,cmnd:b};
+ let better=tau;const a=diff[tau-1]??diff[tau],b=diff[tau],c=diff[tau+1]??diff[tau],den=(2*b-a-c);if(Math.abs(den)>1e-8)better=tau+(c-a)/(2*den);
+ const freq=sr/better,clarity=Math.max(0,Math.min(1,1-b));return{freq,clarity,cmnd:b};
 }
 function rmsOf(buf,start=0){let sum=0,n=0;for(let i=start;i<buf.length;i++){sum+=buf[i]*buf[i];n++}return Math.sqrt(sum/Math.max(1,n))}
+function captureRms(){const raw=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(raw);let mean=0;for(let i=0;i<raw.length;i++)mean+=raw[i];mean/=raw.length;let sum=0;for(let i=0;i<raw.length;i++){const x=raw[i]-mean;sum+=x*x}return Math.sqrt(sum/raw.length)}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+async function calibrateNoise(){
+ statusEl.className='status';statusEl.textContent='Calibrating room noise… keep the guitar quiet.';heardEl.textContent='Listening to the room for 0.6 seconds';
+ const vals=[];for(let i=0;i<12;i++){vals.push(captureRms());await sleep(50)}vals.sort((a,b)=>a-b);const median=vals[Math.floor(vals.length/2)]||.00008;
+ noiseFloor=Math.max(.00004,Math.min(.0015,median*1.08));prevShortRms=noiseFloor;
+ debugEl.textContent=`noise floor ${noiseFloor.toFixed(5)}`;
+}
 function analyze(){
- const raw=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(raw);
- let mean=0;for(let i=0;i<raw.length;i++)mean+=raw[i];mean/=raw.length;for(let i=0;i<raw.length;i++)raw[i]-=mean;
- const rms=rmsOf(raw),shortRms=rmsOf(raw,Math.max(0,raw.length-512));
- const p=profiles[detection.value]||profiles.balanced,gate=Math.max(p.gate,noiseFloor*p.ratio);
- if(rms<gate*.75)noiseFloor=noiseFloor*.995+rms*.005;
- micbar.style.width=Math.min(100,Math.log10(1+rms*3500)*47)+'%';levelText.textContent=rms.toFixed(4);
- if(performance.now()<speechGuardUntil||rms<gate){prevShortRms=shortRms;return{rms,shortRms,gate,pitch:null,attack:false,t:performance.now()}}
- const y=yinPitch(raw,audioCtx.sampleRate);let pitch=null;
- if(y&&y.freq>=70&&y.freq<=380){const near=nearestString(y.freq);pitch={...y,...near}}
- const attack=shortRms>Math.max(gate*1.08,prevShortRms*p.attack+.00012);prevShortRms=shortRms;
- return{rms,shortRms,gate,pitch,attack,t:performance.now()};
+ const raw=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(raw);let mean=0;for(let i=0;i<raw.length;i++)mean+=raw[i];mean/=raw.length;for(let i=0;i<raw.length;i++)raw[i]-=mean;
+ const rms=rmsOf(raw),shortRms=rmsOf(raw,Math.max(0,raw.length-512));const p=profiles[detection.value]||profiles.balanced,gate=Math.max(p.gate,noiseFloor*p.ratio);
+ if(rms<gate*.80)noiseFloor=noiseFloor*.998+rms*.002;
+ micbar.style.width=Math.min(100,Math.log10(1+rms*7000)*42)+'%';levelText.textContent=`${rms.toFixed(5)} / gate ${gate.toFixed(5)}`;
+ const now=performance.now();if(now<speechGuardUntil||rms<gate){const attack=shortRms>Math.max(noiseFloor*1.55,prevShortRms*p.attack+.000015);prevShortRms=shortRms;return{rms,shortRms,gate,pitch:null,attack,t:now}}
+ const y=yinPitch(raw,audioCtx.sampleRate);let pitch=null;if(y&&y.freq>=70&&y.freq<=380){const near=nearestString(y.freq);pitch={...y,...near}}
+ const attack=shortRms>Math.max(gate*1.02,noiseFloor*1.45,prevShortRms*p.attack+.000015);prevShortRms=shortRms;
+ return{rms,shortRms,gate,pitch,attack,t:now};
 }
 function openEvent(reason){eventOpen=true;eventConsumed=false;eventStarted=performance.now();eventCandidates=[];debugEl.textContent=`new pluck: ${reason}`}
 function acceptExpected(pitch){
@@ -87,36 +83,36 @@ function acceptExpected(pitch){
 }
 function maybeStartEvent(frame){
  const p=profiles[detection.value]||profiles.balanced;
- if(frame.attack){if(!eventOpen||eventConsumed||performance.now()-eventStarted>70){openEvent('attack');return}}
- if(!frame.pitch||frame.pitch.clarity<p.yin)return;
- const s=frame.pitch.s;
- if(s===shiftCandidate)shiftFrames++;else{shiftCandidate=s;shiftFrames=1}
+ if(frame.attack&&(!eventOpen||eventConsumed||performance.now()-eventStarted>90)){openEvent('attack');return}
+ if(!frame.pitch||frame.pitch.clarity<p.yin||frame.pitch.cents>p.cents)return;
+ const s=frame.pitch.s;if(s===shiftCandidate)shiftFrames++;else{shiftCandidate=s;shiftFrames=1}
+ if(!eventOpen){openEvent('clear pitch');return}
  if(!eventConsumed||s===lastAcceptedString)return;
- const ratio=lastAcceptedPitch?Math.abs(frame.pitch.freq-lastAcceptedPitch)/lastAcceptedPitch:1;
- if(shiftFrames>=2&&ratio>=p.shift&&performance.now()-lastAcceptedAt>55){openEvent('pitch change')}
+ const expected=current[idx],ratio=lastAcceptedPitch?Math.abs(frame.pitch.freq-lastAcceptedPitch)/lastAcceptedPitch:1;
+ if(s===expected&&shiftFrames>=3&&frame.pitch.clarity>=Math.max(.80,p.yin+.06)&&ratio>=p.shift&&performance.now()-lastAcceptedAt>65)openEvent('clear pitch change');
 }
 function decide(frame){
- const p=profiles[detection.value]||profiles.balanced;
- if(!frame.pitch){if(!testMode)heardEl.textContent='Listening…';maybeStartEvent(frame);return}
+ const p=profiles[detection.value]||profiles.balanced;maybeStartEvent(frame);
+ if(!frame.pitch){if(!testMode)heardEl.textContent='Listening…';return}
  const y=frame.pitch;heardEl.textContent=`Pitch ~${Math.round(y.freq)} Hz → string ${y.s}`;debugEl.textContent=`clarity ${Math.round(y.clarity*100)}% • ${Math.round(y.cents)} cents from ${y.s}`;
  if(testMode){statusEl.className=y.clarity>=p.yin&&y.cents<=p.cents?'status ok':'status';statusEl.textContent=y.clarity>=p.yin&&y.cents<=p.cents?`Detected string ${y.s}.`:'Analyzing…';return}
- maybeStartEvent(frame);
  if(!eventOpen||eventConsumed)return;
- eventCandidates.push({t:frame.t,s:y.s,clarity:y.clarity,cents:y.cents,freq:y.freq});eventCandidates=eventCandidates.filter(x=>x.t>=performance.now()-240);
- const expected=current[idx];const right=eventCandidates.filter(x=>x.s===expected&&x.clarity>=p.yin&&x.cents<=p.cents);
- if(right.length>=p.stable){acceptExpected(right[right.length-1]);return}
- if(performance.now()-eventStarted>300){
-  const counts={};for(const x of eventCandidates){if(x.clarity>=p.yin+.05&&x.cents<=p.cents)counts[x.s]=(counts[x.s]||0)+1}
+ eventCandidates.push({t:frame.t,s:y.s,clarity:y.clarity,cents:y.cents,freq:y.freq});eventCandidates=eventCandidates.filter(x=>x.t>=performance.now()-260);
+ const expected=current[idx],right=eventCandidates.filter(x=>x.s===expected&&x.clarity>=p.yin&&x.cents<=p.cents),strong=right.find(x=>x.clarity>=Math.min(.94,p.yin+.14));
+ if(strong||right.length>=p.stable){acceptExpected(right[right.length-1]||strong);return}
+ if(performance.now()-eventStarted>340){
+  const counts={};for(const x of eventCandidates){if(x.clarity>=p.yin+.08&&x.cents<=p.cents)counts[x.s]=(counts[x.s]||0)+1}
   let bestWrong=null;for(const [s,c] of Object.entries(counts)){if(Number(s)!==expected&&c>=3&&(!bestWrong||c>bestWrong.c))bestWrong={s:Number(s),c}}
   if(bestWrong){mistakes++;stats();statusEl.className='status bad';statusEl.textContent=`Heard string ${bestWrong.s}; expected ${expected}. Try ${expected} again.`}
   eventOpen=false;eventCandidates=[];
  }
 }
-function loop(){if(!running||!analyser)return;const frame=analyze();decide(frame);loopTimer=setTimeout(loop,50)}
+function loop(){if(!running||!analyser)return;decide(analyze());loopTimer=setTimeout(loop,45)}
 async function start(){try{
- audioCtx=new(window.AudioContext||window.webkitAudioContext)();await audioCtx.resume();stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false,channelCount:1},video:false});source=audioCtx.createMediaStreamSource(stream);analyser=audioCtx.createAnalyser();analyser.fftSize=4096;analyser.smoothingTimeConstant=0;source.connect(analyser);noiseFloor=.00038;prevShortRms=0;resetEvent();running=true;testMode=false;startBtn.disabled=true;repeatBtn.disabled=false;nextBtn.disabled=false;testBtn.disabled=false;stopBtn.disabled=false;nextPrompt();loop();
+ audioCtx=new(window.AudioContext||window.webkitAudioContext)();await audioCtx.resume();stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false,channelCount:1},video:false});source=audioCtx.createMediaStreamSource(stream);analyser=audioCtx.createAnalyser();analyser.fftSize=4096;analyser.smoothingTimeConstant=0;source.connect(analyser);
+ running=true;testMode=false;startBtn.disabled=true;repeatBtn.disabled=false;nextBtn.disabled=false;testBtn.disabled=false;stopBtn.disabled=false;resetEvent();await calibrateNoise();nextPrompt();loop();
 }catch(e){console.error(e);statusEl.className='status bad';statusEl.textContent='Could not access the microphone. In Safari, allow Microphone for this site, then reload.'}}
 function stop(){running=false;clearTimeout(loopTimer);clearTimeout(nextTimer);speechSynthesis.cancel();if(stream)stream.getTracks().forEach(t=>t.stop());if(audioCtx)audioCtx.close();stream=audioCtx=analyser=source=null;resetEvent();startBtn.disabled=false;repeatBtn.disabled=true;nextBtn.disabled=true;testBtn.disabled=true;stopBtn.disabled=true;heardEl.textContent='Microphone: off';debugEl.textContent='';micbar.style.width='0%';levelText.textContent='—';statusEl.className='status';statusEl.textContent='Stopped.'}
-startBtn.onclick=start;repeatBtn.onclick=()=>{if(running){testMode=false;show(current)}};nextBtn.onclick=()=>{if(running){testMode=false;nextPrompt()}};testBtn.onclick=()=>{if(!running)return;testMode=!testMode;if(testMode){speechSynthesis.cancel();speechGuardUntil=0;resetEvent();statusEl.className='status';statusEl.textContent='Mic test: play one open string at a time.';heardEl.textContent='Listening…';debugEl.textContent=''}else{resetEvent();statusEl.textContent=`Resume: play string ${current[idx]}.`}};stopBtn.onclick=stop;
+startBtn.onclick=start;repeatBtn.onclick=()=>{if(running){testMode=false;show(current)}};nextBtn.onclick=()=>{if(running){testMode=false;nextPrompt()}};testBtn.onclick=()=>{if(!running)return;testMode=!testMode;if(testMode){speechSynthesis.cancel();speechGuardUntil=0;resetEvent();statusEl.className='status';statusEl.textContent='Mic test: play one open string softly.';heardEl.textContent='Listening…';debugEl.textContent=`noise floor ${noiseFloor.toFixed(5)}`}else{resetEvent();statusEl.textContent=`Resume: play string ${current[idx]}.`}};stopBtn.onclick=stop;
 })();
 </script></body></html>
