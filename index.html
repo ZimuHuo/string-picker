@@ -1,102 +1,50 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#111111">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#111111">
 <title>String Picker</title>
 <style>
 :root{--bg:#101012;--card:#1b1b1f;--card2:#111114;--text:#f7f7f8;--muted:#aaa;--blue:#0a84ff;--green:#30d158;--red:#ff453a;--border:#303036}
-*{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);margin:0}main{max-width:720px;margin:auto;padding:20px 16px 42px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin:12px 0}h1{margin:0 0 5px;font-size:28px}.sub{color:var(--muted);margin:0 0 16px}.version{font-size:11px;color:#777}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:560px){.grid{grid-template-columns:1fr}.buttons{grid-template-columns:1fr 1fr!important}.buttons #startBtn,.buttons #stopBtn{grid-column:span 2}}
-label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}select,input,button{font:inherit;font-size:17px;border-radius:12px;padding:12px}select,input{width:100%;background:var(--card2);color:#fff;border:1px solid var(--border)}button{border:0;background:var(--blue);color:white;font-weight:700}button.secondary{background:#343439}button.danger{background:#6b211e}button:disabled{opacity:.45}.buttons{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:9px}
-.prompt{min-height:118px;display:flex;align-items:center;justify-content:center;gap:15px;flex-wrap:wrap;font-size:clamp(48px,12vw,76px);font-weight:800;text-align:center}.num{display:inline-flex;align-items:center;justify-content:center;min-width:1em;padding:.03em .12em;border-radius:.2em}.num.done{color:var(--green)}.num.now{outline:3px solid var(--blue);outline-offset:4px}.status,.heard{text-align:center;min-height:24px;color:var(--muted)}.status.ok{color:var(--green)}.status.bad{color:var(--red)}.heard{font-size:14px;margin-top:5px}.progress{height:10px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:13px}.progress div{height:100%;width:0;background:var(--blue);transition:width .12s ease}.meterLabel{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:14px}.micmeter{height:7px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:4px}.micmeter div{height:100%;width:0;background:var(--green);transition:width .06s linear}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}.stat{background:var(--card2);border-radius:12px;padding:10px}.stat b{display:block;font-size:24px}.stat span{font-size:12px;color:var(--muted)}.small{color:var(--muted);font-size:13px;line-height:1.5}
-</style>
-</head>
+*{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);margin:0}main{max-width:720px;margin:auto;padding:20px 16px 42px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin:12px 0}h1{margin:0 0 5px;font-size:28px}.sub{color:var(--muted);margin:0 0 16px}.version{font-size:11px;color:#777}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:560px){.grid{grid-template-columns:1fr}.buttons{grid-template-columns:1fr 1fr!important}.buttons #startBtn,.buttons #stopBtn{grid-column:span 2}}label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}select,input,button{font:inherit;font-size:17px;border-radius:12px;padding:12px}select,input{width:100%;background:var(--card2);color:#fff;border:1px solid var(--border)}button{border:0;background:var(--blue);color:#fff;font-weight:700}button.secondary{background:#343439}button.danger{background:#6b211e}button:disabled{opacity:.45}.buttons{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:9px}.prompt{min-height:118px;display:flex;align-items:center;justify-content:center;gap:15px;flex-wrap:wrap;font-size:clamp(48px,12vw,76px);font-weight:800;text-align:center}.num{display:inline-flex;align-items:center;justify-content:center;min-width:1em;padding:.03em .12em;border-radius:.2em}.num.done{color:var(--green)}.num.now{outline:3px solid var(--blue);outline-offset:4px}.status,.heard{text-align:center;min-height:24px;color:var(--muted)}.status.ok{color:var(--green)}.status.bad{color:var(--red)}.heard{font-size:14px;margin-top:5px}.progress{height:10px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:13px}.progress div{height:100%;width:0;background:var(--blue);transition:width .12s ease}.meterLabel{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:14px}.micmeter{height:7px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:4px}.micmeter div{height:100%;width:0;background:var(--green);transition:width .06s linear}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}.stat{background:var(--card2);border-radius:12px;padding:10px}.stat b{display:block;font-size:24px}.stat span{font-size:12px;color:var(--muted)}.small{color:var(--muted);font-size:13px;line-height:1.5}
+</style></head>
 <body><main>
-<h1>String Picker</h1><p class="sub">Play the displayed open strings in order, without looking. <span class="version">v4</span></p>
+<h1>String Picker</h1><p class="sub">Play the displayed open strings in order, without looking. <span class="version">v5</span></p>
 <div class="card"><div class="grid">
 <div><label>Strings per prompt</label><select id="groupSize"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select></div>
 <div><label>Delay after a correct pattern (seconds)</label><input id="spacing" type="number" min="0" max="20" step="0.5" value="1.5"></div>
 <div><label>Voice speed</label><select id="voiceRate"><option value="0.62">Very slow</option><option value="0.78" selected>Slow</option><option value="0.95">Normal</option></select></div>
-<div><label>Detection sensitivity</label><select id="sensitivity"><option value="strict">Strict</option><option value="normal" selected>Normal</option><option value="sensitive">Sensitive / soft picking</option></select></div>
+<div><label>Detection</label><select id="detection"><option value="strict">Strict</option><option value="balanced" selected>Balanced</option><option value="soft">Soft picking</option></select></div>
 </div></div>
-<div class="card">
-<div id="prompt" class="prompt">—</div>
-<div id="status" class="status">Tap Start and allow microphone access.</div>
-<div id="heard" class="heard">Microphone: off</div>
-<div class="progress"><div id="bar"></div></div>
-<div class="meterLabel"><span>Mic level</span><span id="levelText">—</span></div><div class="micmeter"><div id="micbar"></div></div>
-</div>
+<div class="card"><div id="prompt" class="prompt">—</div><div id="status" class="status">Tap Start and allow microphone access.</div><div id="heard" class="heard">Microphone: off</div><div class="progress"><div id="bar"></div></div><div class="meterLabel"><span>Mic level</span><span id="levelText">—</span></div><div class="micmeter"><div id="micbar"></div></div></div>
 <div class="card"><div class="buttons"><button id="startBtn">Start</button><button id="repeatBtn" class="secondary" disabled>Repeat</button><button id="nextBtn" class="secondary" disabled>Next</button><button id="testBtn" class="secondary" disabled>Test mic</button><button id="stopBtn" class="danger" disabled>Stop</button></div></div>
 <div class="card stats"><div class="stat"><b id="correct">0</b><span>patterns correct</span></div><div class="stat"><b id="mistakes">0</b><span>wrong strings</span></div><div class="stat"><b id="accuracy">—</b><span>accuracy</span></div></div>
-<div class="card small">Standard tuning: <b>6</b>=low E (82 Hz), <b>5</b>=A (110 Hz), <b>4</b>=D (147 Hz), <b>3</b>=G (196 Hz), <b>2</b>=B (247 Hz), <b>1</b>=high E (330 Hz). v4 has a much lower, adaptive volume gate and asks the browser for automatic microphone gain, so normal gentle picking should be enough.</div>
+<div class="card small">Standard tuning: <b>6</b>=low E, <b>5</b>=A, <b>4</b>=D, <b>3</b>=G, <b>2</b>=B, <b>1</b>=high E. v5 checks the <b>expected string first</b> using waveform periodicity, so playing nearer the bridge or nearer the neck should not change the answer. It only calls a note “wrong” when a different string is detected with high confidence.</div>
 </main>
 <script>
 (()=>{
-const $=id=>document.getElementById(id);
-const hz={1:329.63,2:246.94,3:196.00,4:146.83,5:110.00,6:82.41};
-const order=[6,5,4,3,2,1];
-const profiles={strict:{gate:2.4,corr:.54},normal:{gate:1.65,corr:.42},sensitive:{gate:1.30,corr:.34}};
-let stream=null,audioCtx=null,analyser=null,source=null,nextTimer=null,loopTimer=null,running=false,current=[],idx=0;
-let correct=0,mistakes=0,speechGuardUntil=0,lastDecisionAt=0,lastCandidate=null,candidateFrames=0,lockedCandidate=null,quietFrames=0,testMode=false;
-let noiseFloor=.00045;
-const groupSize=$("groupSize"),spacing=$("spacing"),voiceRate=$("voiceRate"),sensitivity=$("sensitivity"),promptEl=$("prompt"),statusEl=$("status"),heardEl=$("heard"),bar=$("bar"),micbar=$("micbar"),levelText=$("levelText"),startBtn=$("startBtn"),repeatBtn=$("repeatBtn"),nextBtn=$("nextBtn"),testBtn=$("testBtn"),stopBtn=$("stopBtn"),correctEl=$("correct"),mistakesEl=$("mistakes"),accuracyEl=$("accuracy");
+const $=id=>document.getElementById(id), hz={1:329.63,2:246.94,3:196,4:146.83,5:110,6:82.41}, strings=[6,5,4,3,2,1];
+const profiles={strict:{gate:.0016,ratio:2.5,accept:.60,wrong:.73,margin:.12,frames:3},balanced:{gate:.0009,ratio:2.05,accept:.52,wrong:.70,margin:.11,frames:3},soft:{gate:.00065,ratio:1.75,accept:.48,wrong:.69,margin:.12,frames:3}};
+let stream,audioCtx,analyser,source,loopTimer,nextTimer,running=false,current=[],idx=0,correct=0,mistakes=0,testMode=false,speechGuardUntil=0,noiseFloor=.00045;
+let cand=null,candFrames=0,locked=null,quietFrames=0,lastDecisionAt=0;
+const groupSize=$("groupSize"),spacing=$("spacing"),voiceRate=$("voiceRate"),detection=$("detection"),promptEl=$("prompt"),statusEl=$("status"),heardEl=$("heard"),bar=$("bar"),micbar=$("micbar"),levelText=$("levelText"),startBtn=$("startBtn"),repeatBtn=$("repeatBtn"),nextBtn=$("nextBtn"),testBtn=$("testBtn"),stopBtn=$("stopBtn"),correctEl=$("correct"),mistakesEl=$("mistakes"),accuracyEl=$("accuracy");
 function stats(){correctEl.textContent=correct;mistakesEl.textContent=mistakes;const t=correct+mistakes;accuracyEl.textContent=t?Math.round(correct/t*100)+"%":"—"}
 function rand(n){const a=[];for(let i=0;i<n;i++){let v;do{v=1+Math.floor(Math.random()*6)}while(i&&v===a[i-1]);a.push(v)}return a}
-function renderPrompt(){promptEl.innerHTML=current.map((n,i)=>`<span class="num ${i<idx?'done':i===idx?'now':''}">${n}</span>`).join('')}
-function speak(p){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(p.join(", "));u.rate=parseFloat(voiceRate.value);u.onstart=()=>{speechGuardUntil=performance.now()+850};u.onend=()=>{speechGuardUntil=performance.now()+400;statusEl.textContent=`Play string ${current[idx]} first.`};speechSynthesis.speak(u)}
-function show(p){clearTimeout(nextTimer);current=p;idx=0;lockedCandidate=null;lastCandidate=null;candidateFrames=0;quietFrames=0;bar.style.width="0%";renderPrompt();statusEl.className="status";statusEl.textContent="Listen…";heardEl.textContent="Microphone: active";speak(p)}
+function render(){promptEl.innerHTML=current.map((n,i)=>`<span class="num ${i<idx?'done':i===idx?'now':''}">${n}</span>`).join('')}
+function speak(p){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(p.join(', '));u.rate=parseFloat(voiceRate.value);u.onstart=()=>speechGuardUntil=performance.now()+850;u.onend=()=>{speechGuardUntil=performance.now()+450;statusEl.textContent=`Play string ${current[idx]} first.`};speechSynthesis.speak(u)}
+function show(p){clearTimeout(nextTimer);current=p;idx=0;locked=null;cand=null;candFrames=0;quietFrames=0;bar.style.width='0%';render();statusEl.className='status';statusEl.textContent='Listen…';heardEl.textContent='Microphone: active';speak(p)}
 function nextPrompt(){if(running)show(rand(parseInt(groupSize.value,10)))}
-function scheduleNext(){clearTimeout(nextTimer);const ms=Math.max(0,(parseFloat(spacing.value)||0)*1000);nextTimer=setTimeout(nextPrompt,ms)}
+function scheduleNext(){clearTimeout(nextTimer);nextTimer=setTimeout(nextPrompt,Math.max(0,(parseFloat(spacing.value)||0)*1000))}
 function corr(buf,lag){let xy=0,xx=0,yy=0;const end=buf.length-lag;for(let i=0;i<end;i+=2){const a=buf[i],b=buf[i+lag];xy+=a*b;xx+=a*a;yy+=b*b}return xy/Math.sqrt((xx*yy)||1)}
-function bestNear(buf,targetLag){const radius=Math.max(5,Math.round(targetLag*.045));let best=-1,bestLag=targetLag;for(let lag=Math.max(10,targetLag-radius);lag<=targetLag+radius;lag++){const c=corr(buf,lag);if(c>best){best=c;bestLag=lag}}return{corr:best,lag:bestLag}}
-function analyze(){
- const raw=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(raw);
- let mean=0;for(let i=0;i<raw.length;i++)mean+=raw[i];mean/=raw.length;
- let rms=0;for(let i=0;i<raw.length;i++){raw[i]-=mean;rms+=raw[i]*raw[i]}rms=Math.sqrt(rms/raw.length);
- const meter=Math.min(100,Math.max(0,Math.log10(1+rms*3500)*47));micbar.style.width=meter+"%";levelText.textContent=rms.toFixed(4);
- const profile=profiles[sensitivity.value]||profiles.normal;
- const hardMin=sensitivity.value==='sensitive'?.00038:sensitivity.value==='strict'?.0012:.00065;
- const gate=Math.max(hardMin,noiseFloor*profile.gate);
- if(rms<gate*0.82)noiseFloor=noiseFloor*.985+rms*.015;
- if(performance.now()<speechGuardUntil)return null;
- if(rms<gate){if(testMode)heardEl.textContent=`Listening… level ${rms.toFixed(4)} / need ${gate.toFixed(4)}`;return null}
- const sr=audioCtx.sampleRate,results=[];
- for(const s of order){
-   const a=bestNear(raw,Math.round(sr/hz[s]));
-   const c2=(a.lag*2<raw.length-8)?corr(raw,a.lag*2):a.corr;
-   const c3=(a.lag*3<raw.length-8)?corr(raw,a.lag*3):a.corr;
-   const score=.68*a.corr+.22*c2+.10*c3;
-   results.push({s,score,lag:a.lag,corr:a.corr});
- }
- results.sort((a,b)=>b.score-a.score);let best=results[0];
- // Prefer the lower fundamental when it explains nearly as much of the waveform.
- for(const r of results){if(r.s>best.s&&r.score>best.score-.075&&r.corr>profile.corr-.04){best=r;break}}
- if(best.score<profile.corr)return null;
- return{s:best.s,score:best.score,hz:sr/best.lag,rms,gate};
-}
-function decide(det){
- const now=performance.now();
- if(!det){quietFrames++;if(quietFrames>=2)lockedCandidate=null;lastCandidate=null;candidateFrames=0;if(!testMode)heardEl.textContent="Listening…";return}
- quietFrames=0;heardEl.textContent=`Heard: string ${det.s} (~${Math.round(det.hz)} Hz)`;
- if(det.s===lastCandidate)candidateFrames++;else{lastCandidate=det.s;candidateFrames=1}
- if(candidateFrames<2)return;if(lockedCandidate===det.s)return;if(now-lastDecisionAt<180)return;
- lockedCandidate=det.s;lastDecisionAt=now;
- if(testMode){statusEl.className="status ok";statusEl.textContent=`Detected string ${det.s}.`;return}
- const expected=current[idx];
- if(det.s===expected){idx++;bar.style.width=(idx/current.length*100)+"%";renderPrompt();statusEl.className="status ok";if(idx>=current.length){correct++;stats();statusEl.textContent="Correct ✓ — next pattern";scheduleNext()}else statusEl.textContent=`Correct. Now play string ${current[idx]}.`}
- else{mistakes++;stats();statusEl.className="status bad";statusEl.textContent=`Heard ${det.s}; expected ${expected}. Try ${expected} again.`}
-}
-function loop(){if(!running||!analyser)return;decide(analyze());loopTimer=setTimeout(loop,65)}
-async function start(){
- try{
-  audioCtx=new(window.AudioContext||window.webkitAudioContext)();await audioCtx.resume();
-  stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:true,channelCount:1},video:false});
-  source=audioCtx.createMediaStreamSource(stream);analyser=audioCtx.createAnalyser();analyser.fftSize=8192;analyser.smoothingTimeConstant=0;source.connect(analyser);
-  noiseFloor=.00045;running=true;testMode=false;startBtn.disabled=true;repeatBtn.disabled=false;nextBtn.disabled=false;testBtn.disabled=false;stopBtn.disabled=false;heardEl.textContent="Microphone: active";nextPrompt();loop();
- }catch(e){console.error(e);statusEl.className="status bad";statusEl.textContent="Could not access the microphone. In Safari, allow Microphone for this site, then reload."}
-}
-function stop(){running=false;clearTimeout(nextTimer);clearTimeout(loopTimer);speechSynthesis.cancel();if(stream)stream.getTracks().forEach(t=>t.stop());if(audioCtx)audioCtx.close();stream=audioCtx=analyser=source=null;startBtn.disabled=false;repeatBtn.disabled=true;nextBtn.disabled=true;testBtn.disabled=true;stopBtn.disabled=true;micbar.style.width="0%";levelText.textContent="—";heardEl.textContent="Microphone: off";statusEl.className="status";statusEl.textContent="Stopped."}
-startBtn.onclick=start;repeatBtn.onclick=()=>{if(running){testMode=false;show(current)}};nextBtn.onclick=()=>{if(running){testMode=false;nextPrompt()}};testBtn.onclick=()=>{if(!running)return;testMode=!testMode;if(testMode){speechSynthesis.cancel();speechGuardUntil=0;statusEl.className="status";statusEl.textContent="Mic test: play any open string softly.";heardEl.textContent="Listening…"}else statusEl.textContent=`Resume: play string ${current[idx]}.`};stopBtn.onclick=stop;
+function scoreFor(buf,s){const sr=audioCtx.sampleRate,target=sr/hz[s],radius=Math.max(4,Math.round(target*.035));let best=-1,bestLag=Math.round(target);for(let lag=Math.max(8,Math.round(target-radius));lag<=Math.round(target+radius);lag++){const c=corr(buf,lag);if(c>best){best=c;bestLag=lag}}const c2=(bestLag*2<buf.length-8)?corr(buf,bestLag*2):best;const c3=(bestLag*3<buf.length-8)?corr(buf,bestLag*3):best;return {s,score:.72*best+.20*c2+.08*c3,hz:sr/bestLag}}
+function analyze(){const raw=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(raw);let mean=0;for(const x of raw)mean+=x;mean/=raw.length;let rms=0;for(let i=0;i<raw.length;i++){raw[i]-=mean;rms+=raw[i]*raw[i]}rms=Math.sqrt(rms/raw.length);micbar.style.width=Math.min(100,Math.log10(1+rms*3500)*47)+'%';levelText.textContent=rms.toFixed(4);const p=profiles[detection.value]||profiles.balanced;const gate=Math.max(p.gate,noiseFloor*p.ratio);if(rms<gate*.8)noiseFloor=noiseFloor*.99+rms*.01;if(performance.now()<speechGuardUntil||rms<gate)return null;
+const scores=strings.map(s=>scoreFor(raw,s));scores.sort((a,b)=>b.score-a.score);const best=scores[0];if(testMode)return best.score>=p.accept?{kind:'test',best,scores}:null;
+const expected=current[idx],exp=scores.find(x=>x.s===expected);if(exp&&exp.score>=p.accept){return {kind:'right',best:exp,scores}}
+if(best.score>=p.wrong && (!exp || best.score-exp.score>=p.margin))return {kind:'wrong',best,scores};
+return {kind:'uncertain',best,scores};}
+function decide(d){const now=performance.now();if(!d){quietFrames++;if(quietFrames>=3){locked=null;cand=null;candFrames=0}if(!testMode)heardEl.textContent='Listening…';return}quietFrames=0;if(d.kind==='uncertain'){heardEl.textContent=`Heard something near string ${d.best.s}, checking…`;return}const s=d.best.s;heardEl.textContent=`Heard: string ${s} (~${Math.round(d.best.hz)} Hz)`;if(cand===s)candFrames++;else{cand=s;candFrames=1}const p=profiles[detection.value]||profiles.balanced;if(candFrames<p.frames||locked===s||now-lastDecisionAt<250)return;locked=s;lastDecisionAt=now;if(testMode){statusEl.className='status ok';statusEl.textContent=`Detected string ${s}.`;return}const expected=current[idx];if(d.kind==='right'&&s===expected){idx++;bar.style.width=(idx/current.length*100)+'%';render();statusEl.className='status ok';if(idx>=current.length){correct++;stats();statusEl.textContent='Correct ✓ — next pattern';scheduleNext()}else statusEl.textContent=`Correct. Now play string ${current[idx]}.`}else if(d.kind==='wrong'){mistakes++;stats();statusEl.className='status bad';statusEl.textContent=`Heard ${s}; expected ${expected}. Try ${expected} again.`}}
+function loop(){if(!running||!analyser)return;decide(analyze());loopTimer=setTimeout(loop,70)}
+async function start(){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();await audioCtx.resume();stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false,channelCount:1},video:false});source=audioCtx.createMediaStreamSource(stream);analyser=audioCtx.createAnalyser();analyser.fftSize=8192;analyser.smoothingTimeConstant=0;source.connect(analyser);noiseFloor=.00045;running=true;testMode=false;startBtn.disabled=true;repeatBtn.disabled=false;nextBtn.disabled=false;testBtn.disabled=false;stopBtn.disabled=false;nextPrompt();loop()}catch(e){console.error(e);statusEl.className='status bad';statusEl.textContent='Could not access the microphone. In Safari, allow Microphone for this site, then reload.'}}
+function stop(){running=false;clearTimeout(loopTimer);clearTimeout(nextTimer);speechSynthesis.cancel();if(stream)stream.getTracks().forEach(t=>t.stop());if(audioCtx)audioCtx.close();stream=audioCtx=analyser=source=null;startBtn.disabled=false;repeatBtn.disabled=true;nextBtn.disabled=true;testBtn.disabled=true;stopBtn.disabled=true;heardEl.textContent='Microphone: off';micbar.style.width='0%';levelText.textContent='—';statusEl.className='status';statusEl.textContent='Stopped.'}
+startBtn.onclick=start;repeatBtn.onclick=()=>{if(running){testMode=false;show(current)}};nextBtn.onclick=()=>{if(running){testMode=false;nextPrompt()}};testBtn.onclick=()=>{if(!running)return;testMode=!testMode;if(testMode){speechSynthesis.cancel();speechGuardUntil=0;statusEl.className='status';statusEl.textContent='Mic test: play any open string normally.';heardEl.textContent='Listening…'}else statusEl.textContent=`Resume: play string ${current[idx]}.`};stopBtn.onclick=stop;
 })();
 </script></body></html>
